@@ -13,7 +13,8 @@ with open(filename) as f:
         highs.append(high)  #appending high temperatures   
     
     #Plot Data
-    fig = plt.figure(dpi = 128, figsize = (10,6))
+    #fig = plt.figure(dpi = 128, figsize = (10,6))
+    plt.figure(dpi = 128, figsize = (10,6))
     plt.plot(highs, c = 'red') #Line 1
     #Format Plot
     plt.title("Daily High Temperatures, 2018", fontsize = 24)
@@ -24,4 +25,4 @@ with open(filename) as f:
     plt.show()
 
 #input("done, press enter to end")
-
+exizt(0)
