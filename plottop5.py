@@ -14,7 +14,7 @@ def main(args):
     #filename = args.iFilePath
     filename = "./input/time_series_covid19_confirmed_global.csv"
     verbose = args.verbose
-    country = 'Germany'
+    country = args.country
 
     with open(filename) as f:
         reader = csv.reader(f)
@@ -23,28 +23,33 @@ def main(args):
             print("Header row is:\n")
             print(header_row)
             print("\n")
-        dailyCases = []
-        #np.empty(len(header_row-4),dtype=int)
+
+        #regionx = np.empty(len(header_row)-4,dtype=int)
+        #dailyCases = np.empty(len(header_row)-4,dtype=int)
+        dailyCases = np.zeros(len(header_row)-4,dtype=int)
+        #dailyCases = []
+        counter = int(0)
 
         for row in reader:
             if row[1] != country:
                 continue
             else:
-                if (row[0] != ''):
-                    continue
+                # if (row[0] != ''):
+                #     continue
                 #print(len(row))
-                dailyCases = row[4:]
-                #print(dailyCases)
-        
+                dailyCases += np.asarray(list(map(int,row[4:])))
+                counter+=1
+                #dailyCases += regionx
+
         num_points = len(dailyCases)
 
         if num_points == 0:
             print("Did not find any data points")
             exit(1)
         if verbose:
-            print("Found " + str(num_points) + "data points")
+            print("Found " + str(counter) + "lines and " + str(num_points) +  "dates")
 
-        dailyCases = np.asarray(list(map(int, dailyCases)))
+        #dailyCases = np.asarray(list(map(int, dailyCases)))
 
         # Plot Data
         if verbose:
@@ -81,12 +86,13 @@ if __name__ == "__main__":
         description='Read latest data and print top 5')
 
     # Add the arguments
-    # my_parser.add_argument('iFilePath',
-    #     metavar='inputFilePath',
-    #     type=str,
-    #     #required=True,
-    #     #action='store',
-    #     help='the path to existing input file')
+    my_parser.add_argument('-c',
+        '--country',
+        metavar='Country',
+        type=str,
+        required=True,
+        action='store',
+        help='Name of the desired country')
     
     # my_parser.add_argument('oFilePath',
     #     metavar='outputFilePath',

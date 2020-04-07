@@ -9,7 +9,9 @@
             "type": "python",
             "request": "launch",
             "program": "${file}",
-            "args": ["-v"],
+            "args": ["-v",
+                    "-c",
+                    "China"],
             "console": "integratedTerminal"
         }
     ]
