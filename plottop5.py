@@ -5,9 +5,9 @@ __version__ = "0.2.0"
 import argparse
 import os.path
 import csv
-import matplotlib
+import matplotlib.pyplot as plt
 import numpy as np
-from matplotlib import pyplot as plt
+#from matplotlib import pyplot
 
 def main(args):
 
@@ -19,14 +19,13 @@ def main(args):
     with open(filename) as f:
         reader = csv.reader(f)
         header_row = next(reader)
-        dates = header_row[4:]
         if verbose:
-            print("Dates row is:\n")
-            print(dates)
+            print("Header row is:\n")
+            print(header_row)
             print("\n")
         dailyCases = []
-        #accum = []
-        #print(reader.fieldnames)
+        #np.empty(len(header_row-4),dtype=int)
+
         for row in reader:
             if row[1] != country:
                 continue
@@ -35,61 +34,39 @@ def main(args):
                     continue
                 #print(len(row))
                 dailyCases = row[4:]
-                print(dailyCases)
+                #print(dailyCases)
+        
         num_points = len(dailyCases)
 
         if num_points == 0:
             print("Did not find any data points")
             exit(1)
-            if (len(dates) != num_points):
-                print("error with data points")
-                exit(1)
+        if verbose:
+            print("Found " + str(num_points) + "data points")
 
-        print("Found " + str(num_points) + "data points")
+        dailyCases = np.asarray(list(map(int, dailyCases)))
 
-        # accum.append(int(dailyCases[0]))
-
-        # for i in range (1, len(dailyCases)-1) :
-        #     accum.append(int(dailyCases[i]) + accum[i-1])
-
-        # N = 5
-  
-        # # using list slicing 
-        # # Get last N elements from list 
-        # debugt = accum[-N:]
-        # # print result 
-        # print("The last N elements of list are : " + str(debugt)) 
-
-        #    print(row['region'])
-        #     if row[8]=='':
-        #         continue
-        #     high = int(row[8],10)
-        #     highs.append(high)  #appending high temperatures   
-        
         # Plot Data
-        y = dailyCases
-        print(y)
-        # x = np.arange(len(dailyCases))        #fig = plt.figure(dpi = 128, figsize = (10,6))
-        #x = np.linspace(start=0, stop=len(dailyCases)-1, num=len(dailyCases))
-        # print(x)
-        #fig = plt.figure(figsize = (10,6))
-        #fig = plt.figure()
-        #plt.plot(x, y , 'ro')
-        plt.plot(y)
-        #plt.plot(y , 'ro')
-        plt.yscale('linear')
-        #plt.yscale('symlog', linthreshy=0.01)
+        if verbose:
+            print("Data to plot:")
+            print(dailyCases)
+        fig = plt.figure(figsize = (10,6))
+        plt.plot(dailyCases, 'bo')
+        #plt.yscale('linear')
+        
         # Format Plot
+        #plt.yscale('symlog', linthreshy=0.01)
         title = f'Daily Confirmed Cases in {country}'
-        plt.title(title, fontsize = 16)
+        #plt.title(title, fontsize = 16)
+        plt.title(title)
         #plt.xlabel('date',fontsize = 8)
-        #plt.ylabel("Cases (#)", fontsize = 8)
-        plt.tick_params(axis = 'both', which = 'major' , labelsize = 8)
-        #plt.savefig('outplot.png')
+        plt.ylabel("Cases (#)", fontsize = 8)
+        #plt.tick_params(axis = 'both', which = 'major' , labelsize = 8)
+        plt.savefig('output/sample.png')
         #ax = plt.gca()
         #ax.ticklabel_format(useOffset=False)
         #ax.set_aspect('equal', adjustable='box')
-        plt.draw()
+        #plt.draw()
         plt.show()
 
     print("Finished succesfully!")
