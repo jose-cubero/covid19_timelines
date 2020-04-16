@@ -7,7 +7,6 @@ import os.path
 import csv
 import matplotlib.pyplot as plt
 import numpy as np
-#from matplotlib import pyplot
 
 def main(args):
 
@@ -24,30 +23,32 @@ def main(args):
             print(header_row)
             print("\n")
 
-        #regionx = np.empty(len(header_row)-4,dtype=int)
-        #dailyCases = np.empty(len(header_row)-4,dtype=int)
         dailyCases = np.zeros(len(header_row)-4,dtype=int)
-        #dailyCases = []
         counter = int(0)
 
         for row in reader:
             if row[1] != country:
                 continue
-            else:
-                # if (row[0] != ''):
-                #     continue
-                #print(len(row))
-                dailyCases += np.asarray(list(map(int,row[4:])))
-                counter+=1
-                #dailyCases += regionx
+
+            #special case 1, skip "overseas territories" of selected countries
+            if (country == "Denmark" or
+                country == "France" or
+                country == "Netherlands" or
+                country == "United Kingdom"):
+                if (row[0] != ''):
+                    continue
+
+            #general case and special case 2 (countries shown as several sub-regions)
+            dailyCases += np.asarray(list(map(int,row[4:])))
+            counter+=1
 
         num_points = len(dailyCases)
 
-        if num_points == 0:
-            print("Did not find any data points")
+        if counter == 0:
+            print("Did not find any data for the given country")
             exit(1)
         if verbose:
-            print("Found " + str(counter) + "lines and " + str(num_points) +  "dates")
+            print("Found " + str(counter) + " lines and " + str(num_points) +  " date records")
 
         #dailyCases = np.asarray(list(map(int, dailyCases)))
 
