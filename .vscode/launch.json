@@ -10,8 +10,11 @@
             "request": "launch",
             "program": "${file}",
             "args": ["-v",
-                    "-c",
-                    "Canada"],
+                   "-cl",
+                   "input/country_list.txt"
+                //    "-c",
+                //    "China"
+],
             "console": "integratedTerminal"
         }
     ]
