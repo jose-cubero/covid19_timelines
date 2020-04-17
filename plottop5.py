@@ -13,67 +13,80 @@ def main(args):
     #filename = args.iFilePath
     filename = "./input/time_series_covid19_confirmed_global.csv"
     verbose = args.verbose
-    country = args.country
+    countries = []
 
+    #Single country, name given as argument
+    if (args.country != None):
+        countries.append(args.country)
+    # Using list of countries
+    else:
+        with open(args.countrylist) as clf:
+            countries = clf.readlines()
+            if(args.verbose):
+                print("Opening list file: \n")
+                print(args.countrylist)
+                print("\n")
+                
     with open(filename) as f:
-        reader = csv.reader(f)
-        header_row = next(reader)
-        if verbose:
-            print("Header row is:\n")
-            print(header_row)
-            print("\n")
+        for country in countries:
+            f.seek(0,0)
+            reader = csv.reader(f)
+            header_row = next(reader)
+            # if verbose:
+            #     print("Header row is:\n")
+            #     print(header_row)
+            #     print("\n")
+            country = country.strip()
+            dailyCases = np.zeros(len(header_row)-4,dtype=int)
+            counter = int(0)
 
-        dailyCases = np.zeros(len(header_row)-4,dtype=int)
-        counter = int(0)
-
-        for row in reader:
-            if row[1] != country:
-                continue
-
-            #special case 1, skip "overseas territories" of selected countries
-            if (country == "Denmark" or
-                country == "France" or
-                country == "Netherlands" or
-                country == "United Kingdom"):
-                if (row[0] != ''):
+            for row in reader:
+                if row[1] != country:
                     continue
 
-            #general case and special case 2 (countries shown as several sub-regions)
-            dailyCases += np.asarray(list(map(int,row[4:])))
-            counter+=1
+                #special case 1, skip "overseas territories" of selected countries
+                if (country == "Denmark" or
+                    country == "France" or
+                    country == "Netherlands" or
+                    country == "United Kingdom"):
+                    if (row[0] != ''):
+                        continue
 
-        num_points = len(dailyCases)
+                #general case and special case 2 (countries shown as several sub-regions)
+                dailyCases += np.asarray(list(map(int,row[4:])))
+                counter+=1
 
-        if counter == 0:
-            print("Did not find any data for the given country")
-            exit(1)
-        if verbose:
-            print("Found " + str(counter) + " lines and " + str(num_points) +  " date records")
+            if counter == 0:
+                print("Did not find any data for the country " + country)
+                exit(1)
 
-        #dailyCases = np.asarray(list(map(int, dailyCases)))
+            num_points = len(dailyCases)
+            if verbose:
+                print("Found " + str(counter) + " lines and " + str(num_points) +  " date records for the country: " + country)
 
-        # Plot Data
-        if verbose:
-            print("Data to plot:")
-            print(dailyCases)
-        fig = plt.figure(figsize = (10,6))
-        plt.plot(dailyCases, 'bo')
-        #plt.yscale('linear')
-        
-        # Format Plot
-        #plt.yscale('symlog', linthreshy=0.01)
-        title = f'Daily Confirmed Cases in {country}'
-        #plt.title(title, fontsize = 16)
-        plt.title(title)
-        #plt.xlabel('date',fontsize = 8)
-        plt.ylabel("Cases (#)", fontsize = 8)
-        #plt.tick_params(axis = 'both', which = 'major' , labelsize = 8)
-        plt.savefig('output/sample.png')
-        #ax = plt.gca()
-        #ax.ticklabel_format(useOffset=False)
-        #ax.set_aspect('equal', adjustable='box')
-        #plt.draw()
-        plt.show()
+            # Plot Data
+            if verbose:
+                print("Data to plot:")
+                print(dailyCases)
+            fig = plt.figure(figsize = (10,6))
+            plt.plot(dailyCases, 'bo')
+            #plt.yscale('linear')
+            
+            # Format Plot
+            #plt.yscale('symlog', linthreshy=0.01)
+            title = f'Daily Confirmed Cases in {country}'
+            #plt.title(title, fontsize = 16)
+            plt.title(title)
+            #plt.xlabel('date',fontsize = 8)
+            plt.ylabel("Cases (#)", fontsize = 8)
+            #plt.tick_params(axis = 'both', which = 'major' , labelsize = 8)
+            #TODO: use better name for output file
+            plt.savefig('output/sample.png')
+            #ax = plt.gca()
+            #ax.ticklabel_format(useOffset=False)
+            #ax.set_aspect('equal', adjustable='box')
+            #plt.draw()
+            plt.show()
 
     print("Finished succesfully!")
     #input("done, press enter to end")
@@ -86,23 +99,6 @@ if __name__ == "__main__":
         #usage='%(prog)s -i input [-o output]',
         description='Read latest data and print top 5')
 
-    # Add the arguments
-    my_parser.add_argument('-c',
-        '--country',
-        metavar='Country',
-        type=str,
-        required=True,
-        action='store',
-        help='Name of the desired country')
-    
-    # my_parser.add_argument('oFilePath',
-    #     metavar='outputFilePath',
-    #     type=str,
-    #     #required=True,
-    #     #action='store',
-    #     #default="output.txt",
-    #     help='the path to new output file')
-    
     my_parser.add_argument('-v',
         '--verbose',
         action='store_true')
@@ -113,18 +109,39 @@ if __name__ == "__main__":
         action="version",
         version="%(prog)s (version {version})".format(version=__version__))
 
+    group = my_parser.add_mutually_exclusive_group(required=True)
+    group.add_argument('--foo', action='store_true')
+    group.add_argument('--bar', action='store_false')
+
+    group.add_argument('-c',
+        '--country',
+        metavar='Country',
+        type=str,
+        action='store',
+        help='Name of the desired country')
+    
+    group.add_argument('-cl',
+        '--countrylist',
+        metavar='PathToListFile',
+        type=str,
+        action='store',
+        help='File containing a list of countries, one per line')
+
+    # my_parser.add_argument('oFilePath',
+    #     metavar='outputFilePath',
+    #     type=str,
+    #     #required=True,
+    #     #action='store',
+    #     #default="output.txt",
+    #     help='the path to new output file')
+    
+
 #Run Argument parser
 args = my_parser.parse_args()
 if args.verbose:
     print("Arguments:\n")
     print(vars(args))
     print("\n")
-
-# # Check input file
-# if os.path.isfile(args.iFilePath):
-#     print ("Input file exist")
-# else:
-#     print ("Input file does not exist")
 
 #Run Mian
 main(args)
