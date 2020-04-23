@@ -1,4 +1,4 @@
-# Covid19 Plot top 5 countries
+# Covid19 Plot confirmed cases of covid-19
 __author__ = "Jose Cubero"
 __version__ = "0.2.0"
 
@@ -10,25 +10,30 @@ import numpy as np
 
 def main(args):
 
-    #filename = args.iFilePath
-    filename = "./input/time_series_covid19_confirmed_global.csv"
+    dfile_confirmed = "./input/time_series_covid19_confirmed_global.csv"
+    dfile_deaths    = "./input/time_series_covid19_deaths_global.csv"
+    dfile_recovered = "./input/time_series_covid19_recovered_global.csv"
     verbose = args.verbose
-    countries = []
+    countryList = []
+    plotDataDict = {}
 
-    #Single country, name given as argument
+    #1 Get the county list
+    #1a. Single country, name given as argument
     if (args.country != None):
-        countries.append(args.country)
-    # Using list of countries
+        countryList.append(args.country)
+    #1b. Using list of countries
     else:
         with open(args.countrylist) as clf:
-            countries = clf.readlines()
-            if(args.verbose):
-                print("Opening list file: \n")
-                print(args.countrylist)
-                print("\n")
-                
-    with open(filename) as f:
-        for country in countries:
+            countryList = [line.rstrip() for line in clf]
+
+    if(args.verbose):
+        print("Selected countries: ")
+        print(countryList)
+        print("\n")
+
+    #TODO: read parameter for data to plot: --data [conf, death, rec, all] 
+    with open(dfile_confirmed) as f:
+        for country in countryList:
             f.seek(0,0)
             reader = csv.reader(f)
             header_row = next(reader)
@@ -36,7 +41,6 @@ def main(args):
             #     print("Header row is:\n")
             #     print(header_row)
             #     print("\n")
-            country = country.strip()
             dailyCases = np.zeros(len(header_row)-4,dtype=int)
             counter = int(0)
 
@@ -60,6 +64,8 @@ def main(args):
                 print("Did not find any data for the country " + country)
                 exit(1)
 
+            plotDataDict[country] = dailyCases
+
             num_points = len(dailyCases)
             if verbose:
                 print("Found " + str(counter) + " lines and " + str(num_points) +  " date records for the country: " + country)
@@ -68,25 +74,42 @@ def main(args):
             if verbose:
                 print("Data to plot:")
                 print(dailyCases)
-            fig = plt.figure(figsize = (10,6))
-            plt.plot(dailyCases, 'bo')
-            #plt.yscale('linear')
-            
-            # Format Plot
-            #plt.yscale('symlog', linthreshy=0.01)
-            title = f'Daily Confirmed Cases in {country}'
-            #plt.title(title, fontsize = 16)
-            plt.title(title)
-            #plt.xlabel('date',fontsize = 8)
-            plt.ylabel("Cases (#)", fontsize = 8)
-            #plt.tick_params(axis = 'both', which = 'major' , labelsize = 8)
-            #TODO: use better name for output file
-            plt.savefig('output/sample.png')
-            #ax = plt.gca()
-            #ax.ticklabel_format(useOffset=False)
-            #ax.set_aspect('equal', adjustable='box')
-            #plt.draw()
-            plt.show()
+
+    #TODO: add normalize parameter
+    normalize = True
+    fig = plt.figure(figsize = (10,6))
+
+    #plt.plot(plotDataDict[country], 'bo')
+
+    ax = plt.subplot(111)
+    for x in plotDataDict:
+        # if (normalize)
+        #     popx = getpop(x)
+        #     plotdata = [dailytotal / popx for dailytotal in plotDataDict[item]]
+        # else:
+        #     plotdata = plotDataDict[x]
+        plt.plot(plotDataDict[x], 'o', label=x)
+
+    leg = plt.legend(fancybox=True)
+    leg.get_frame().set_alpha(0.5)
+
+    #plt.yscale('linear')
+    
+    # Format Plot
+    #plt.yscale('symlog', linthreshy=0.01)
+    title = f'Daily Confirmed Cases in {country}'
+    #plt.title(title, fontsize = 16)
+    plt.title(title)
+    #plt.xlabel('date',fontsize = 8)
+    plt.ylabel("Cases (#)", fontsize = 8)
+    #plt.tick_params(axis = 'both', which = 'major' , labelsize = 8)
+    #TODO: use better name for output file
+    #plt.savefig('output/sample.png')
+    #ax = plt.gca()
+    #ax.ticklabel_format(useOffset=False)
+    #ax.set_aspect('equal', adjustable='box')
+    #plt.draw()
+    plt.show()
 
     print("Finished succesfully!")
     #input("done, press enter to end")
