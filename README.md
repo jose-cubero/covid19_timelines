@@ -2,7 +2,8 @@
 
 Tool Usage:
 
-plottop5.py [-v] 
+usage: plottop5 [-h] [-v] [-vn]
+                (--foo | --bar | -c Country | -cl PathToListFile)
 
 
 ## Time series summary (csse_covid_19_time_series)
