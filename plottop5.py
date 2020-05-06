@@ -11,8 +11,8 @@ import numpy as np
 def main(args):
 
     dfile_confirmed = "./input/time_series_covid19_confirmed_global.csv"
-    dfile_deaths    = "./input/time_series_covid19_deaths_global.csv"
-    dfile_recovered = "./input/time_series_covid19_recovered_global.csv"
+    # dfile_deaths    = "./input/time_series_covid19_deaths_global.csv"
+    # dfile_recovered = "./input/time_series_covid19_recovered_global.csv"
     verbose = args.verbose
     countryList = []
     plotDataDict = {}
