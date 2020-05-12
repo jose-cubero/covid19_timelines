@@ -2,11 +2,16 @@
 __author__ = "Jose Cubero"
 __version__ = "1.0.0"
 
+#Standard library imports
 import argparse
 import os.path
 import csv
 import matplotlib.pyplot as plt
 import numpy as np
+#import pandas as pd
+
+#Project local imports
+import parse_population
 
 def main(args):
 
@@ -16,6 +21,8 @@ def main(args):
     verbose = args.verbose
     countryList = []
     plotDataDict = {}
+    popDict = parse_population.get_dict()
+    #countryPop_dict = pd.read_csv("./input/population_per_country_wkipedia.csv")
 
     #1 Get the county list
     #1a. Single country, name given as argument
@@ -83,12 +90,15 @@ def main(args):
 
     ax = plt.subplot(111)
     for x in plotDataDict:
-        # if (normalize)
-        #     popx = getpop(x)
-        #     plotdata = [dailytotal / popx for dailytotal in plotDataDict[item]]
-        # else:
-        #     plotdata = plotDataDict[x]
-        plt.plot(plotDataDict[x], 'o', label=x)
+        if (normalize):
+            popx = popDict[x]
+            if (args.verbose):
+                print("" + str(x) + "the population is" + str(popx))
+            plotdata = [dailytotal*1000/popx for dailytotal in plotDataDict[x]]
+        else:
+            plotdata = plotDataDict[x]
+        # plt.plot(plotDataDict[x], 'o', label=x)
+        plt.plot(plotdata, 'o', label=x)
 
     leg = plt.legend(fancybox=True)
     leg.get_frame().set_alpha(0.5)
@@ -97,7 +107,7 @@ def main(args):
     
     # Format Plot
     #plt.yscale('symlog', linthreshy=0.01)
-    title = f'Daily Confirmed Cases in {country}'
+    title = f'Daily Confirmed Cases per 1K inhabitants'
     #plt.title(title, fontsize = 16)
     plt.title(title)
     #plt.xlabel('date',fontsize = 8)
