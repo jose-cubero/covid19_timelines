@@ -1,6 +1,6 @@
 # Covid19 Plot confirmed cases of covid-19
 __author__ = "Jose Cubero"
-__version__ = "0.2.0"
+__version__ = "1.0.0"
 
 import argparse
 import os.path
@@ -11,8 +11,8 @@ import numpy as np
 def main(args):
 
     dfile_confirmed = "./input/time_series_covid19_confirmed_global.csv"
-    dfile_deaths    = "./input/time_series_covid19_deaths_global.csv"
-    dfile_recovered = "./input/time_series_covid19_recovered_global.csv"
+    # dfile_deaths    = "./input/time_series_covid19_deaths_global.csv"
+    # dfile_recovered = "./input/time_series_covid19_recovered_global.csv"
     verbose = args.verbose
     countryList = []
     plotDataDict = {}
