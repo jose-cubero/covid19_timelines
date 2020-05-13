@@ -20,7 +20,7 @@ def main(args):
     verbose = args.verbose
     countryList = []
     plotDataDict = {}
-    # popDict = parse_population.get_dict()
+    popDict = parse_population.get_dict()
  
     #1 Get the county list
     #1a. Single country, name given as argument
@@ -39,15 +39,14 @@ def main(args):
     #TODO: read parameter for data to plot: --data [conf, death, rec, all] 
     #    with open(dfile_confirmed) as f:
     df = pd.read_csv(dfile_confirmed)
-    # df = df[]
+    # subset = df[df["Province/State"] == NaN]
+
+    #subset = df[df['Province/State'].astype(bool)]
     #df['Province/State'].replace('', np.nan, inplace=True)
     df.dropna(subset=['Province/State'], inplace=True)
 
     print(df)
     # discard unwanted columns
-
-    df.iloc[9:25, 2:5]
-
     # case 1, skip "overseas territories" of selected countries
     #     if (country == "Denmark" or
     #         country == "France" or
