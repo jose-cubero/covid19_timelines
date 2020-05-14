@@ -17,7 +17,9 @@ def get_world_pop(country_list=None):
     df = df.loc[:,['Country_Area', 'UN_Region', 'Population_2019']]
     if (country_list != None):
         df = df[df['Country_Area'].isin(country_list)]
-    df.to_csv("./tmp/clean_world_pop_selected.csv", columns=['Country_Area'], index=False, header=False)
+    # DEBUG
+    df.sort_values('Country_Area').to_csv( "./tmp/clean_world_pop_selected.csv", columns=['Country_Area'], index=False, header=False )
+    
     return df
 
 def get_clean_covid_data(data_set):
@@ -29,23 +31,43 @@ def get_clean_covid_data(data_set):
 
     # Clean data s1: get rid of colony data :D ()
     # Applies for= "Denmark", "France", "Netherlands", "United Kingdom"
+    # examples: Province/State,Country/Region,
+    #   keep: ",Denmark,"
+    #   drop: "Greenland,Denmark,"
+    #   keep: "Beijing,China", Chongqing,China, ...
+
     df = df[ ~(df['Country/Region'].isin(['Denmark', 'France', 'Netherlands', 'United Kingdom'])) |
               (df['Province/State'].isna()) ]
+    ## Less efficient, drop..
+    ## df.drop(df[ (df['Country/Region'].isin(['Denmark', 'France', 'Netherlands', 'United Kingdom'])) &
+    ##             (df['Province/State'].notna()) ].index, axis=0, inplace=True)
 
-    df = df.drop(columns= ['Province/State'])
-
-    # Less efficient, drop..
-    # df.drop(df[ (df['Country/Region'].isin(['Denmark', 'France', 'Netherlands', 'United Kingdom'])) &
-    #             (df['Province/State'].notna()) ].index, axis=0, inplace=True)
+    # Clean data s4: to be dropped:
+    # * Diamond Princess
+    # * MS Zaandam
+    df = df[ ~(df['Country/Region'].isin(['Diamond Princess', 'MS Zaandam']) )]
+    # using drop
+    # df.drop( df[ df['Country/Region'].isin(['Diamond Princess', 'MS Zaandam']) ].index, axis=0, inplace=True)
 
     # Clean data s2: merge multi-region countries
-    df = df.groupby('Country/Region').sum()
+    df = df.drop(columns= ['Province/State'])
+    df = df.groupby('Country/Region', as_index=False).sum()
 
-    # Clean data s3: Change some stupid names...
-    # df.loc[df[['Country/Region'] == 'US'] , 'Country/Region'] = 'USA'
+    # Clean data s3: Modify some particular names...
+    # to be fixed:    
+    fix_these = {
+        'US' : 'USA',
+        'Korea, South' : 'South Korea',
+        'Taiwan*' : 'Taiwan',
+        'West Bank and Gaza' : 'Palestine'
+    }
+
+    for item in fix_these:
+        df.loc[ df['Country/Region'] == item, 'Country/Region'] = fix_these[item]
 
     #df.to_csv(("./tmp/clean_" + data_set + ".csv"))
-    df.to_csv("./tmp/clean_covid.csv", columns=[], header=False)
+    df.sort_values('Country/Region').to_csv("./tmp/clean_covid.csv", columns=['Country/Region'], index=False, header=False)
+
     # print(df) #DEBUG
 
     return df
@@ -54,7 +76,8 @@ confirmed_df = get_clean_covid_data('confirmed')
 deaths_df = get_clean_covid_data('deaths')
 recovered_df = get_clean_covid_data('recovered')
 
-mylist = recovered_df.index.astype(str).tolist()
+# mylist = recovered_df.index.astype(str).tolist()
+mylist = recovered_df["Country/Region"].astype(str).tolist()
 #print(mylist)
 
 get_world_pop(mylist)
