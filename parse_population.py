@@ -73,45 +73,53 @@ def get_clean_covid_data(data_set):
 
     return df
 
+# Preparation: close matplotlib windows..
+plt.close('all')
+# User args
+# TODO: merge with command line args
+country_list = ['Germany', 'France', 'Spain', 'Italy']
+
 # Load data into the DFs
 confirmed_df = get_clean_covid_data('confirmed')
 deaths_df    = get_clean_covid_data('deaths')
 recovered_df = get_clean_covid_data('recovered')
+population_df = get_world_pop(country_list)
 
 # DEBUG, get full dictionary to compare names..
 #mylist = confirmed_df['Country/Region'].astype(str).tolist()
 #world_pop_df = get_world_pop(mylist)
 
-# TODO: merge with command line args
-country_list = ['Germany', 'France', 'Spain', 'Italy']
-
 # PLOT 1: Net confirmed cases
 confirmed_net = confirmed_df[ confirmed_df['Country/Region'].isin(country_list) ]
 confirmed_net.set_index('Country/Region', inplace=True)
-print("DF1: confirmed_net")
-print(confirmed_net)
-print("\n\n")
-plt.close('all')
+# print("DF1: confirmed_net")
+# print(confirmed_net)
+# print("\n\n")
 confirmed_net.T.plot(title='Confirmed Cases')
 
 #PLOT 2: Normalized confirmed cases (per 100 inhabitants)
-population_df = get_world_pop(country_list).loc[ : , ['Country_Area', 'Population_2019'] ]
+population_df = population_df.loc[ : , ['Country_Area', 'Population_2019'] ]
 population_df.set_index('Country_Area', inplace=True)
-print("DF2: population_df")
-print(population_df)
-print(population_df.dtypes)
-print("\n\n")
+# print("DF2: population_df")
+# print(population_df)
+# print(population_df.dtypes)
+# print("\n\n")
 
 confirmed_pop = confirmed_net.div(population_df['Population_2019'], axis=0)
-
-print("DF3: confirmed_pop")
-print(confirmed_pop)
-print("\n\n")
+# print("DF3: confirmed_pop")
+# print(confirmed_pop)
+# print("\n\n")
 confirmed_pop.T.plot(title='Confirmed Cases per 1000 inhabitants')
 
-# deaths_net = deaths_df[ deaths_df['Country/Region'].isin(country_list) ]
-# deaths_net.set_index('Country/Region', inplace=True)
-# deaths_net.T.plot(title='Deaths')
+deaths_net = deaths_df[ deaths_df['Country/Region'].isin(country_list) ]
+deaths_net.set_index('Country/Region', inplace=True)
+deaths_net.T.plot(title='Deaths')
+
+death_rate = (deaths_net / confirmed_net) *100
+print(death_rate)
+death_rate.T.plot(title='Death-rate %')
+
+# DataFrame.nsmallest(self, n, columns[, keep])
 
 # Plot
 plt.show()
