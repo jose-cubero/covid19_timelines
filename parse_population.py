@@ -78,34 +78,41 @@ confirmed_df = get_clean_covid_data('confirmed')
 deaths_df    = get_clean_covid_data('deaths')
 recovered_df = get_clean_covid_data('recovered')
 
-mylist = confirmed_df['Country/Region'].astype(str).tolist()
-world_pop_df = get_world_pop(mylist)
+# DEBUG, get full dictionary to compare names..
+#mylist = confirmed_df['Country/Region'].astype(str).tolist()
+#world_pop_df = get_world_pop(mylist)
 
-# Print all 3 series for country_x
+# TODO: merge with command line args
 country_list = ['Germany', 'France', 'Spain', 'Italy']
 
-# confirmed_x = confirmed_df[ confirmed_df['Country/Region'] == country_x ].T.reset_index()
-confirmed_x = confirmed_df[ confirmed_df['Country/Region'].isin(country_list) ]
-confirmed_x.set_index('Country/Region', inplace=True)
-print(confirmed_x)
-print(confirmed_x.columns)
-print(confirmed_x.index)
+# PLOT 1: Net confirmed cases
+confirmed_net = confirmed_df[ confirmed_df['Country/Region'].isin(country_list) ]
+confirmed_net.set_index('Country/Region', inplace=True)
+print("DF1: confirmed_net")
+print(confirmed_net)
+print("\n\n")
+plt.close('all')
+confirmed_net.T.plot(title='Confirmed Cases')
 
-confirmed_x.T.plot()
+#PLOT 2: Normalized confirmed cases (per 100 inhabitants)
+population_df = get_world_pop(country_list).loc[ : , ['Country_Area', 'Population_2019'] ]
+population_df.set_index('Country_Area', inplace=True)
+print("DF2: population_df")
+print(population_df)
+print(population_df.dtypes)
+print("\n\n")
 
-# plot_df = confirmed_x.iloc[: , 1: ]
-# plot_df = confirmed_x.T
+confirmed_pop = confirmed_net.div(population_df['Population_2019'], axis=0)
 
-# print("AFTER \n\n\n")
-# # print(plot_df.columns)
-# print("AFTER \n\n\n")
-# print(plot_df.index)
-# #print(confirmed_x)
-# Date format used in csv: 1/26/20
+print("DF3: confirmed_pop")
+print(confirmed_pop)
+print("\n\n")
+confirmed_pop.T.plot(title='Confirmed Cases per 1000 inhabitants')
+
+# deaths_net = deaths_df[ deaths_df['Country/Region'].isin(country_list) ]
+# deaths_net.set_index('Country/Region', inplace=True)
+# deaths_net.T.plot(title='Deaths')
 
 # Plot
-# plt.close('all')
-# plot_df.plot()
-
 plt.show()
 # exit(0)
