@@ -27,7 +27,7 @@ def get_clean_covid_data(data_set):
 
     # TODO: add arg check for validity ['confirmed', 'deaths', 'recovered']
     file_name = './input/time_series_covid19_' + data_set + '_global.csv'
-    df = pd.read_csv(file_name)
+    df = pd.read_csv(file_name, )
     df = df.drop(columns= ['Lat','Long'])
 
     # Clean data s1: get rid of colony data :D ()
@@ -40,8 +40,8 @@ def get_clean_covid_data(data_set):
     df = df[ ~(df['Country/Region'].isin(['Denmark', 'France', 'Netherlands', 'United Kingdom'])) |
               (df['Province/State'].isna()) ]
     ## Less efficient, drop..
-    ## df.drop(df[ (df['Country/Region'].isin(['Denmark', 'France', 'Netherlands', 'United Kingdom'])) &
-    ##             (df['Province/State'].notna()) ].index, axis=0, inplace=True)
+    df.drop(df[ (df['Country/Region'].isin(['Denmark', 'France', 'Netherlands', 'United Kingdom'])) &
+                 (df['Province/State'].notna()) ].index, axis=0, inplace=True)
 
     # Clean data s4: to be dropped:
     # * Diamond Princess
@@ -95,7 +95,7 @@ confirmed_net.set_index('Country/Region', inplace=True)
 # print("DF1: confirmed_net")
 # print(confirmed_net)
 # print("\n\n")
-confirmed_net.T.plot(title='Confirmed Cases')
+confirmed_net.T.plot(title='Confirmed Cases, Netto')
 
 #PLOT 2: Normalized confirmed cases (per 100 inhabitants)
 population_df = population_df.loc[ : , ['Country_Area', 'Population_2019'] ]
@@ -104,20 +104,27 @@ population_df.set_index('Country_Area', inplace=True)
 # print(population_df)
 # print(population_df.dtypes)
 # print("\n\n")
-
 confirmed_pop = confirmed_net.div(population_df['Population_2019'], axis=0)
 # print("DF3: confirmed_pop")
 # print(confirmed_pop)
 # print("\n\n")
-confirmed_pop.T.plot(title='Confirmed Cases per 1000 inhabitants')
+confirmed_pop.T.plot(title='Confirmed Cases, per 1000 inhabitants')
 
+#PLOT 3: Daily Increase of confirmed cases
+daily_increase = confirmed_net.diff(axis=1)
+# print(death_rate)
+daily_increase.T.plot(title='Confirmed Cases, Daily Increase')
+
+#PLOT 4: Net deaths
 deaths_net = deaths_df[ deaths_df['Country/Region'].isin(country_list) ]
 deaths_net.set_index('Country/Region', inplace=True)
-deaths_net.T.plot(title='Deaths')
 
+deaths_net.T.plot(title='Deaths, Netto')
+
+#PLOT 5: Deaths per confirmed cases. (Death Rate)
 death_rate = (deaths_net / confirmed_net) *100
-print(death_rate)
-death_rate.T.plot(title='Death-rate %')
+# print(death_rate)
+death_rate.T.plot(title='Death-rate (%) = Net Deaths / Net Cases')
 
 # DataFrame.nsmallest(self, n, columns[, keep])
 
