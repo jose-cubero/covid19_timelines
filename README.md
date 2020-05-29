@@ -2,33 +2,26 @@
 
 ## Python scripts
 
-usage: plottop5 [-h] [-v] [-vn]
-                (--foo | --bar | -c Country | -cl PathToListFile)
+| Filename | Contents | Status | TODO |
+| :------- | :------: | :----: | :---: |
+| parse_population.py | contains helper functions (current main, plots 5 graphs (cases, cases_norm, cases_delta, deaths, death_rate, ) for the selected countries) | works  | keep existing helper functions, add new, delete main |
+| find_top5_per_Region.py | identifies top 5 countries per UN region based on cases and prints each UN region in a separate graph  | works  | write a file with the country statistics (prepare input for next script?), remove redundant def of helpers |
+| pandas_plot0.py | should be the Main script (pandas version of the plottop5) , contains args management | broken usage of dicts | improve dependencies |
+| plottop5.py | Orginal with pyplot and subplot (no pandas) | broken | reset back to working version! |
+| aux/sample1.py | shows usage of pandas .loc for data selection (series vs df) | works | nothing
+| aux/simpleplot.py | basic pyplot example, no pandas | works | nothing
+| aux/dpi.py | Shows usage of figsize and dpi for matplotlib.pyplot | Runs | nothing
 
+## Data folders
 
-### Data folders
-
-
-
-
-## Time series summary (csse_covid_19_time_series)
+### input
+Time series summary (csse_covid_19_time_series)
 This folder contains daily time series summary tables, including confirmed, deaths and recovered. All data are from the daily case report.
 
-### Field descriptioin
-* Province/State: same as above.
-* Country/Region: same as above.
-* Lat and Long: a coordinates reference for the user.
-* Date fields: M/DD/YYYY (UTC), the same data as MM-DD-YYYY.csv file.
-
-TODO:
-- [x] clean up
-- [x] clean up 2- [csvplot_covid19](#csvplot_covid19)
-
-- [ ] clean up3
-- [ ] clean up4
+### ouput
 
 - [csvplot_covid19](#csvplot_covid19)
   - [Python scripts](#python-scripts)
-    - [Data folders](#data-folders)
-  - [Time series summary (csse_covid_19_time_series)](#time-series-summary-csse_covid_19_time_series)
-    - [Field descriptioin](#field-descriptioin)
+  - [Data folders](#data-folders)
+    - [input](#input)
+    - [ouput](#ouput)
