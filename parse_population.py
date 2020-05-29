@@ -74,58 +74,58 @@ def get_clean_covid_data(data_set):
     df.sort_index().to_csv('./tmp/clean_covid.csv', columns=[], header=False)
     return df
 
-# Preparation: close matplotlib windows..
-plt.close('all')
-# User args
-# TODO: merge with command line args
-country_list = ['Brazil', 'Spain', 'Germany']
+# # Preparation: close matplotlib windows..
+# plt.close('all')
+# # User args
+# # TODO: merge with command line args
+# country_list = ['Brazil', 'Spain', 'Germany']
 
-# Load data into the DFs
-confirmed_df = get_clean_covid_data('confirmed')
-deaths_df    = get_clean_covid_data('deaths')
-recovered_df = get_clean_covid_data('recovered')
-population_df = get_world_pop(country_list)
+# # Load data into the DFs
+# confirmed_df = get_clean_covid_data('confirmed')
+# deaths_df    = get_clean_covid_data('deaths')
+# recovered_df = get_clean_covid_data('recovered')
+# population_df = get_world_pop(country_list)
 
-# DEBUG, get full dictionary to compare names..
-#mylist = confirmed_df['Country'].astype(str).tolist()
-#world_pop_df = get_world_pop(mylist)
+# # DEBUG, get full dictionary to compare names..
+# #mylist = confirmed_df['Country'].astype(str).tolist()
+# #world_pop_df = get_world_pop(mylist)
 
-# PLOT 1: Net confirmed cases
-confirmed_net = confirmed_df.loc[ country_list , : ]
-# TODO: remove # confirmed_net.set_index('Country', inplace=True)
-# print("DF1: confirmed_net")
-# print(confirmed_net)
-# print("\n\n")
-confirmed_net.T.plot(title='Confirmed Cases, Netto')
+# # PLOT 1: Net confirmed cases
+# confirmed_net = confirmed_df.loc[ country_list , : ]
+# # TODO: remove # confirmed_net.set_index('Country', inplace=True)
+# # print("DF1: confirmed_net")
+# # print(confirmed_net)
+# # print("\n\n")
+# confirmed_net.T.plot(title='Confirmed Cases, Netto')
 
-#PLOT 2: Normalized confirmed cases (per 100 inhabitants)
-population_df = population_df.loc[ : , ['Population_2019'] ]
-# print("DF2: population_df")
-# print(population_df)
-# print(population_df.dtypes)
-# print("\n\n")
-confirmed_pop = confirmed_net.div(population_df['Population_2019'], axis=0)
-# print("DF3: confirmed_pop")
-# print(confirmed_pop)
-# print("\n\n")
-confirmed_pop.T.plot(title='Confirmed Cases, per 1000 inhabitants')
+# #PLOT 2: Normalized confirmed cases (per 100 inhabitants)
+# population_df = population_df.loc[ : , ['Population_2019'] ]
+# # print("DF2: population_df")
+# # print(population_df)
+# # print(population_df.dtypes)
+# # print("\n\n")
+# confirmed_pop = confirmed_net.div(population_df['Population_2019'], axis=0)
+# # print("DF3: confirmed_pop")
+# # print(confirmed_pop)
+# # print("\n\n")
+# confirmed_pop.T.plot(title='Confirmed Cases, per 1000 inhabitants')
 
 
-#PLOT 3: Daily Increase of confirmed cases
-daily_increase = confirmed_net.diff(axis=1)
-# print(death_rate)
-daily_increase.T.plot(title='Confirmed Cases, Daily Increase')
+# #PLOT 3: Daily Increase of confirmed cases
+# daily_increase = confirmed_net.diff(axis=1)
+# # print(death_rate)
+# daily_increase.T.plot(title='Confirmed Cases, Daily Increase')
 
-#PLOT 4: Net deaths
-deaths_net = deaths_df.loc[ country_list , : ]
-deaths_net.T.plot(title='Deaths, Netto')
+# #PLOT 4: Net deaths
+# deaths_net = deaths_df.loc[ country_list , : ]
+# deaths_net.T.plot(title='Deaths, Netto')
 
-#PLOT 5: Deaths per confirmed cases. (Death Rate)
-death_rate = (deaths_net / confirmed_net) *100
-death_rate.T.plot(title='Death-rate (%) = Net Deaths / Net Cases')
+# #PLOT 5: Deaths per confirmed cases. (Death Rate)
+# death_rate = (deaths_net / confirmed_net) *100
+# death_rate.T.plot(title='Death-rate (%) = Net Deaths / Net Cases')
 
-# DataFrame.nsmallest(self, n, columns[, keep])
+# # DataFrame.nsmallest(self, n, columns[, keep])
 
-# Plot
-plt.show()
-exit(0)
+# # Plot
+# plt.show()
+# exit(0)
