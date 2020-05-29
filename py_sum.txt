@@ -1,7 +1,0 @@
-dpi.py
-find_top5_per_Region.py
-pandas_plot0.py
-parse_population.py
-plottop5.py
-sample1.py
-simpleplot.py
