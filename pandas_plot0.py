@@ -19,8 +19,8 @@ def main(args):
     # dfile_recovered = "./input/time_series_covid19_recovered_global.csv"
     verbose = args.verbose
     countryList = []
-    plotDataDict = {}
-    popDict = parse_population.get_dict()
+    #TODO: add normalize parameter
+    normalize = False
  
     #1 Get the county list
     #1a. Single country, name given as argument
@@ -36,65 +36,44 @@ def main(args):
         print(countryList)
         print("\n")
 
-    #TODO: read parameter for data to plot: --data [conf, death, rec, all] 
-    #    with open(dfile_confirmed) as f:
-    df = pd.read_csv(dfile_confirmed)
-    # subset = df[df["Province/State"] == NaN]
+    ##### GET DATA for selected countries
+    popDF = parse_population.get_world_pop()
+    popDF = popDF.loc[countryList,'Population_2019']
 
-    #subset = df[df['Province/State'].astype(bool)]
-    #df['Province/State'].replace('', np.nan, inplace=True)
-    df.dropna(subset=['Province/State'], inplace=True)
+    plotDataDF = parse_population.get_clean_covid_data('confirmed')
+    plotDataDF = plotDataDF.loc[countryList,]
 
-    print(df)
-    # discard unwanted columns
-    # case 1, skip "overseas territories" of selected countries
-    #     if (country == "Denmark" or
-    #         country == "France" or
-    #         country == "Netherlands" or
-    #         country == "United Kingdom"):
-    #         if (row[0] != ''):
-    #             continue
+    ##### change to dict (temporary!!!)
+    popDict = popDF.to_dict()
+    plotDataDict = plotDataDF.T.to_dict()
 
+    print(popDict)
+    print(plotDataDict)
 
-
-    # # merge all countries into single line
-
-    #             #general case and special case 2 (countries shown as several sub-regions)
-    #             dailyCases += np.asarray(list(map(int,row[4:])))
-    #             counter+=1
-
-    #         if counter == 0:
-    #             print("Did not find any data for the country " + country)
-    #             exit(1)
-
-    #         plotDataDict[country] = dailyCases
-
-    #         num_points = len(dailyCases)
-    #         if verbose:
-    #             print("Found " + str(counter) + " lines and " + str(num_points) +  " date records for the country: " + country)
-
-    #         # Plot Data
-    #         if verbose:
-    #             print("Data to plot:")
-    #             print(dailyCases)
-
-    #TODO: add normalize parameter
-    normalize = True
+    ##### Print data
     fig = plt.figure(figsize = (10,6))
 
     #plt.plot(plotDataDict[country], 'bo')
+
+    print(plotDataDict)
 
     ax = plt.subplot(111)
     for x in plotDataDict:
         if (normalize):
             popx = popDict[x]
+            print("IMHEREEE")
             if (args.verbose):
                 print("" + str(x) + "the population is" + str(popx))
             plotdata = [dailytotal*1000/popx for dailytotal in plotDataDict[x]]
         else:
             plotdata = plotDataDict[x]
+        print(plotdata)
+        lists = sorted(plotdata.items()) # sorted by key, return a list of tuples
+        tx, ty = zip(*lists) # unpack a list of pairs into two tuples
+        plt.plot(tx, ty, 'o', label=x)
+        #exit(0)
         # plt.plot(plotDataDict[x], 'o', label=x)
-        plt.plot(plotdata, 'o', label=x)
+        #plt.plot(plotdata, 'o', label=x)
 
     leg = plt.legend(fancybox=True)
     leg.get_frame().set_alpha(0.5)

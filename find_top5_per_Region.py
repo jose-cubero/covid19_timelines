@@ -128,7 +128,6 @@ grouped_data = cases_net_df.groupby("UN_Region")
 # 	print("\n")
 
 # Find countries with more infections, per region
-my_llist = {}
 for region, dfx in grouped_data:
     print("********" + region + "********")
 #    print("Total cases"+ dfx.sum)
