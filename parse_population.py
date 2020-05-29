@@ -78,7 +78,7 @@ def get_clean_covid_data(data_set):
 plt.close('all')
 # User args
 # TODO: merge with command line args
-country_list = ['Germany', 'France', 'Spain', 'Italy']
+country_list = ['Brazil', 'Spain', 'Germany']
 
 # Load data into the DFs
 confirmed_df = get_clean_covid_data('confirmed')
