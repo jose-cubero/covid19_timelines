@@ -1,16 +1,26 @@
 # Covid19 Plot confirmed cases of covid-19
 __author__ = "Jose Cubero"
-__version__ = "2.0.0"
+__version__ = "1.0.0"
 
 #Standard library imports
 import argparse
 import os.path
+import csv
 import matplotlib.pyplot as plt
 import numpy as np
-import pandas as pd
+#---import pandas as pd
+from pandas import read_csv
 
-#Project local imports
-import parse_population
+#--- Project local imports
+#---- import parse_population
+
+def get_dict():
+    file_worldpop = "./input/world_pop_wikipedia.csv"
+    countryPop = read_csv(file_worldpop, index_col= "Country_Area")
+    countryPop = countryPop["Population_2019"]
+    print (countryPop)
+
+    return countryPop
 
 def main(args):
 
@@ -20,8 +30,9 @@ def main(args):
     verbose = args.verbose
     countryList = []
     plotDataDict = {}
-    # popDict = parse_population.get_dict()
- 
+    popDict = get_dict()
+    #countryPop_dict = pd.read_csv("./input/population_per_country_wkipedia.csv")
+
     #1 Get the county list
     #1a. Single country, name given as argument
     if (args.country != None):
@@ -37,47 +48,48 @@ def main(args):
         print("\n")
 
     #TODO: read parameter for data to plot: --data [conf, death, rec, all] 
-    #    with open(dfile_confirmed) as f:
-    df = pd.read_csv(dfile_confirmed)
-    # df = df[]
-    #df['Province/State'].replace('', np.nan, inplace=True)
-    df.dropna(subset=['Province/State'], inplace=True)
+    with open(dfile_confirmed) as f:
+        for country in countryList:
+            f.seek(0,0)
+            reader = csv.reader(f)
+            header_row = next(reader)
+            # if verbose:
+            #     print("Header row is:\n")
+            #     print(header_row)
+            #     print("\n")
+            dailyCases = np.zeros(len(header_row)-4,dtype=int)
+            counter = int(0)
 
-    print(df)
-    # discard unwanted columns
+            for row in reader:
+                if row[1] != country:
+                    continue
 
-    df.iloc[9:25, 2:5]
+                #special case 1, skip "overseas territories" of selected countries
+                if (country == "Denmark" or
+                    country == "France" or
+                    country == "Netherlands" or
+                    country == "United Kingdom"):
+                    if (row[0] != ''):
+                        continue
 
-    # case 1, skip "overseas territories" of selected countries
-    #     if (country == "Denmark" or
-    #         country == "France" or
-    #         country == "Netherlands" or
-    #         country == "United Kingdom"):
-    #         if (row[0] != ''):
-    #             continue
+                #general case and special case 2 (countries shown as several sub-regions)
+                dailyCases += np.asarray(list(map(int,row[4:])))
+                counter+=1
 
+            if counter == 0:
+                print("Did not find any data for the country " + country)
+                exit(1)
 
+            plotDataDict[country] = dailyCases
 
-    # # merge all countries into single line
+            num_points = len(dailyCases)
+            if verbose:
+                print("Found " + str(counter) + " lines and " + str(num_points) +  " date records for the country: " + country)
 
-    #             #general case and special case 2 (countries shown as several sub-regions)
-    #             dailyCases += np.asarray(list(map(int,row[4:])))
-    #             counter+=1
-
-    #         if counter == 0:
-    #             print("Did not find any data for the country " + country)
-    #             exit(1)
-
-    #         plotDataDict[country] = dailyCases
-
-    #         num_points = len(dailyCases)
-    #         if verbose:
-    #             print("Found " + str(counter) + " lines and " + str(num_points) +  " date records for the country: " + country)
-
-    #         # Plot Data
-    #         if verbose:
-    #             print("Data to plot:")
-    #             print(dailyCases)
+            # Plot Data
+            if verbose:
+                print("Data to plot:")
+                print(dailyCases)
 
     #TODO: add normalize parameter
     normalize = True
