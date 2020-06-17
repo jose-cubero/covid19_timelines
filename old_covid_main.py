@@ -18,8 +18,8 @@ def get_dict():
     file_worldpop = "./input/world_pop_wikipedia.csv"
     countryPop = read_csv(file_worldpop, index_col= "Country_Area")
     countryPop = countryPop["Population_2019"]
-    print (countryPop)
-
+    # print (countryPop)
+    # print (type(countryPop))  # <#pandas.core.series.Series'
     return countryPop
 
 def main(args):
@@ -91,43 +91,33 @@ def main(args):
                 print("Data to plot:")
                 print(dailyCases)
 
-    #TODO: add normalize parameter
-    normalize = True
-    fig = plt.figure(figsize = (10,6))
+    fig, axs = plt.subplots(2, 1, sharex=True,
+                        gridspec_kw={'hspace': 0.3, 'wspace': 0.2},
+                        figsize = (10,8))
 
-    #plt.plot(plotDataDict[country], 'bo')
-
-    ax = plt.subplot(111)
+    line_labels = []
     for x in plotDataDict:
-        if (normalize):
-            popx = popDict[x]
-            if (args.verbose):
-                print("" + str(x) + "the population is" + str(popx))
-            plotdata = [dailytotal*1000/popx for dailytotal in plotDataDict[x]]
-        else:
-            plotdata = plotDataDict[x]
-        # plt.plot(plotDataDict[x], 'o', label=x)
-        plt.plot(plotdata, 'o', label=x)
+        axs[0].plot(plotDataDict[x], label=x)
+        axs[0].set_title('Confirmed cases (Netto)')
+        line_labels.append(str(x))
 
-    leg = plt.legend(fancybox=True)
-    leg.get_frame().set_alpha(0.5)
+        popx = popDict[x]
+        if (args.verbose):
+            print(str(x) + "'s population is: " + str(popx))
+        plotdata_norm = [dailytotal*1000/popx for dailytotal in plotDataDict[x]]
+        axs[1].plot(plotdata_norm, label=x)
+        axs[1].set_title('Confirmed cases (per 1K inhabitants)')
 
-    #plt.yscale('linear')
-    
-    # Format Plot
-    #plt.yscale('symlog', linthreshy=0.01)
-    title = f'Daily Confirmed Cases per 1K inhabitants'
-    #plt.title(title, fontsize = 16)
-    plt.title(title)
-    #plt.xlabel('date',fontsize = 8)
-    plt.ylabel("Cases (#)", fontsize = 8)
-    #plt.tick_params(axis = 'both', which = 'major' , labelsize = 8)
-    #TODO: use better name for output file
-    #plt.savefig('output/sample.png')
-    #ax = plt.gca()
-    #ax.ticklabel_format(useOffset=False)
-    #ax.set_aspect('equal', adjustable='box')
-    #plt.draw()
+    # Create the legend
+    fig.legend( labels= line_labels,   # The labels for each line
+        loc="upper left",   # Position of legend
+        # borderaxespad=5,    # Small spacing around legend box
+        title="Country Key"  # Title for the legend
+        )
+
+    # create space for the legend
+    # topspace = 1- (0.05 * len(lines) + 0.07)
+    # plt.subplots_adjust(top=topspace)
     plt.show()
 
     print("Finished succesfully!")
@@ -137,7 +127,7 @@ def main(args):
 # Arg Parser. This is executed when run from the command line
 if __name__ == "__main__":
     # Create the parser
-    my_parser = argparse.ArgumentParser(prog='plottop5',
+    my_parser = argparse.ArgumentParser(prog='covid_main',
         #usage='%(prog)s -i input [-o output]',
         description='Read latest data and print top 5')
 
@@ -145,15 +135,7 @@ if __name__ == "__main__":
         '--verbose',
         action='store_true')
     
-    # Specify output of "--version"
-    my_parser.add_argument('-vn',
-        "--version",
-        action="version",
-        version="%(prog)s (version {version})".format(version=__version__))
-
     group = my_parser.add_mutually_exclusive_group(required=True)
-    group.add_argument('--foo', action='store_true')
-    group.add_argument('--bar', action='store_false')
 
     group.add_argument('-c',
         '--country',
