@@ -4,7 +4,7 @@ __version__ = "1.0.0"
 
 #Standard library imports
 import argparse
-import os.path
+#import os.path
 import csv
 import matplotlib.pyplot as plt
 import numpy as np
@@ -93,13 +93,12 @@ def main(args):
 
     fig, axs = plt.subplots(2, 1, sharex=True,
                         gridspec_kw={'hspace': 0.3, 'wspace': 0.2},
-                        figsize = (10,8))
+                        figsize = (10,8),
+                        constrained_layout=True)
 
-    line_labels = []
     for x in plotDataDict:
         axs[0].plot(plotDataDict[x], label=x)
         axs[0].set_title('Confirmed cases (Netto)')
-        line_labels.append(str(x))
 
         popx = popDict[x]
         if (args.verbose):
@@ -107,17 +106,9 @@ def main(args):
         plotdata_norm = [dailytotal*1000/popx for dailytotal in plotDataDict[x]]
         axs[1].plot(plotdata_norm, label=x)
         axs[1].set_title('Confirmed cases (per 1K inhabitants)')
+        # axs[1].legend()
 
-    # Create the legend
-    fig.legend( labels= line_labels,   # The labels for each line
-        loc="upper left",   # Position of legend
-        # borderaxespad=5,    # Small spacing around legend box
-        title="Country Key"  # Title for the legend
-        )
-
-    # create space for the legend
-    # topspace = 1- (0.05 * len(lines) + 0.07)
-    # plt.subplots_adjust(top=topspace)
+    plt.legend()
     plt.show()
 
     print("Finished succesfully!")
@@ -129,7 +120,7 @@ if __name__ == "__main__":
     # Create the parser
     my_parser = argparse.ArgumentParser(prog='covid_main',
         #usage='%(prog)s -i input [-o output]',
-        description='Read latest data and print top 5')
+        description='Plot the number of confirmed COVID-19 cases for the selected country(ies)')
 
     my_parser.add_argument('-v',
         '--verbose',
@@ -167,6 +158,6 @@ if args.verbose:
     print(vars(args))
     print("\n")
 
-#Run Mian
+#Run Main
 main(args)
 exit(0)

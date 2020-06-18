@@ -78,9 +78,6 @@ population_df    = get_world_pop()
 cases_norm_df    = cases_net_df.div(population_df['Population_2019'], axis=0) * 1000 # (per 1000)
 # drops countries without data..
 cases_norm_df.dropna(inplace=True)
-###### alternative, fill with zeroes.
-## cases_norm_df = cases_net_df.div(population_df['Population_2019'], axis=0, fillvalue=float) * 1000 # (per 1000) -> fill_na not implemented!
-## cases_norm_df.fillna(0)
 
 cases_delta_df   = cases_net_df.diff(axis=1)
 # TODO: apply a moving average to smooth the curve
@@ -130,32 +127,24 @@ grouped_data = cases_net_df.groupby("UN_Region")
 # Find countries with more infections, per region
 for region, dfx in grouped_data:
     print("********" + region + "********")
-#    print("Total cases"+ dfx.sum)
-    print("total cases = ", dfx.iloc[:, -1].sum())
-    my_list= dfx.nlargest(5, columns=dfx.columns[-1], keep='all')
-    # print(my_list)
+    # my_list= dfx.nlargest(5, columns=dfx.columns[-1], keep='all')
+    my_list= dfx
+    print(my_list)
     print(my_list.iloc[:,-1])
     my_list = my_list.iloc[:,1:].div(population_df['Population_2019'], axis=0) * 1000 # (per 1000)
     my_list.dropna(inplace=True)
     (my_list.iloc[:, 1:]).T.plot(title=region)
-# 	print("\n")
+
+    # TODO Create a row of totals
+    print("total cases = ", dfx.iloc[:, -1].sum())
+
+
+    print ("\n")
 
 # my_list= cases_norm_df.nlargest(20, columns=cases_norm_df.columns[-1], keep='all')
 #mylist = confirmed_df['Country'].astype(str).tolist()
 # print(my_list)
 
-# (my_list.iloc[:, 1:]).T.plot(title='Normalized Cases (per 1000 inhabitants')
-
-# sample_print = cases_norm_df.loc[ ['Costa Rica'] , :].T
-# sample_print.plot(title='Death-rate (%) = Net Deaths / Net Cases')
-
-
-# GENERATE PLOTS
-# Preparation: close matplotlib windows..
-# plt.close('all')
-# PLOT 5: Deaths per confirmed cases. (Death Rate)
-# death_rate.T.plot(title='Death-rate (%) = Net Deaths / Net Cases')
-# Plot
 plt.show()
 
 exit(0)
