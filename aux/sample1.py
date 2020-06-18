@@ -23,13 +23,13 @@ df['Country'] = country_list
 # print(dfa2)
 # print("\n")
 
-dfa3 = df.loc[ df[df['Country'] == 'Germany'].index , : ]   #overkill in this case
-dfa4 = df.loc[ df['Country'] == 'Germany' , : ]             # BEST?!
-dfa6 = df[ df['Country'] == 'Germany' ]                     #OK..
-print(dfa3)
-print(dfa4)
-print(dfa6)
-# print("\n")
+# dfa3 = df.loc[ df[df['Country'] == 'Germany'].index , : ]   #overkill in this case
+# dfa4 = df.loc[ df['Country'] == 'Germany' , : ]             # BEST?!
+# dfa6 = df[ df['Country'] == 'Germany' ]                     #OK..
+# print(dfa3)
+# print(dfa4)
+# print(dfa6)
+# # print("\n")
 
 # dfa4 = df.loc[ 0: 2 ]
 # print(dfa4)
@@ -54,12 +54,12 @@ df.set_index('Country', inplace=True)
 # print(dfb3)
 # print("\n")
 
-dfb4 = df.loc[ 'Germany': 'Spain', : ]  # OK
-dfb5 = df.loc[ ['Germany','Spain'], : ] # OK
-dfb6 = df[ 'Germany': 'Spain' ]         # TODO: UGLY confusing, do not use!
+dfb4 = df.loc[ 'Germany', : ]  # OK
+dfb5 = df.loc[ ['Germany'], : ] # OK
+# dfb6 = df[ 'Germany' ]         # TODO: UGLY confusing, do not use!
 print(dfb4)
 print(dfb5)
-print(dfb6)
+#print(dfb6)
 print("\n")
 
 exit(0)
