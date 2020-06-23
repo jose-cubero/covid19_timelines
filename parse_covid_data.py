@@ -14,7 +14,7 @@ def get_world_pop(country_list=None):
     # fields: Country_Area,Continent,UN_Region,Population_2018,Population_2019,Change
 
     df = pd.read_csv(file_worldpop)
-    df = df.loc[:,['Country_Area', 'UN_Region', 'Population_2019']]
+    df = df.loc[:,['Country_Area', 'Continent', 'UN_Region', 'Population_2019']]
     df = df.rename(columns={'Country_Area': 'Country'}).set_index('Country')
 
     if (debug_lib):
