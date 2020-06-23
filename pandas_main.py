@@ -12,8 +12,23 @@ import matplotlib.pyplot as plt
 import parse_covid_data as pcov
 
 debug_lib = False
+world_population_df = pcov.get_world_pop()
+world_confirmed_df = pcov.get_clean_covid_data('confirmed')
+world_deaths_df    = pcov.get_clean_covid_data('deaths')
+world_recovered_df = pcov.get_clean_covid_data('recovered')
 
-def plot_covid_6vars(country_list):
+# to be run when used as lib. Load all DFs, parse csvs once.
+# def load_data?
+    # TODO: check is this is the right approach??
+    ##### Fill in Covid-19 raw data frames
+    # world_population_df = pcov.get_world_pop()
+
+    # world_confirmed_df = pcov.get_clean_covid_data('confirmed')
+    # world_deaths_df    = pcov.get_clean_covid_data('deaths')
+    # world_recovered_df = pcov.get_clean_covid_data('recovered')
+
+
+def plot_covid_6vars(country_list=[], region=""):
 
     if(country_list == []):
         print("plot_covid_6vars: received empty list invalid empty list! exiting..")
@@ -24,13 +39,17 @@ def plot_covid_6vars(country_list):
         print(country_list)
         print("\n")
 
-    # World population info
-    population_df = pcov.get_world_pop(country_list)
+    # Filter World population info
+    # population_df = pcov.get_world_pop(country_list)
+    population_df = world_population_df.loc[ country_list, :]
 
     ##### Fill in Covid-19 raw data frames
-    confirmed_df = pcov.get_clean_covid_data('confirmed', country_list)
-    deaths_df    = pcov.get_clean_covid_data('deaths', country_list)
-    recovered_df = pcov.get_clean_covid_data('recovered', country_list)
+    # confirmed_df = pcov.get_clean_covid_data('confirmed', country_list)
+    confirmed_df = world_confirmed_df.loc[ country_list, :]
+    # deaths_df    = pcov.get_clean_covid_data('deaths', country_list)
+    deaths_df = world_deaths_df.loc[ country_list, :]
+    #recovered_df = pcov.get_clean_covid_data('recovered', country_list)
+    recovered_df = world_recovered_df.loc[ country_list, :]
 
     ##### Create derived Covid-19 data 
     # Normalized confirmed cases (per 1000 inhabitants)
@@ -56,7 +75,7 @@ def plot_covid_6vars(country_list):
     confirmed_norm_df.T.plot(ax=axs[1,0], title='Confirmed Cases norm (per 1k inhabitants)')
     
     active_norm_df.T.plot(ax=axs[0,1], title='Active Cases norm')
-    confirmed_norm_delta_df.T.plot(ax=axs[1,1], title='Confirmed Cases norm, Delta, Smoothed')
+    confirmed_norm_delta_df.T.plot(ax=axs[1,1], title='Daily New Confirmed norm, Smoothed')
 
     deaths_df.T.plot(ax=axs[0,2], title='Total Deaths')
     death_rate_df.T.plot(ax=axs[1,2], title='Death-rate (%) = Net Deaths / Net Cases')
@@ -117,6 +136,8 @@ if __name__ == "__main__":
 
     # Preparation: close matplotlib windows..
     plt.close('all')
+    # TODO: check if this would be a better approach
+    # load_covid_world_data()
 
     #Run Main function (generates plots)
     plot_covid_6vars(country_list)
