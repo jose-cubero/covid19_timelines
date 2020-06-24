@@ -28,6 +28,58 @@ world_recovered_df = pcov.get_clean_covid_data('recovered')
     # world_recovered_df = pcov.get_clean_covid_data('recovered')
 
 
+region_list = ["Northern America",
+               "Central America",
+               "Caribbean",
+               "South America",
+               "Northern Europe",
+               "Western Europe",
+               "Southern Europe",
+               "Eastern Europe",
+               "Northern Africa",
+               "Western Africa",
+               "Eastern Africa",
+               "Middle Africa",
+               "Southern Africa",
+               "Western Asia",
+               "Central Asia",
+               "Eastern Asia",
+               "Southern Asia",
+               "South-eastern Asia",
+               "Australia and New Zealand",
+               "Melanesia",
+            ]
+
+    # cat_reg_type = pd.CategoricalDtype(categories=region_list, ordered=True)
+
+    # df['UN_Region'] = df['UN_Region'].astype(cat_reg_type)
+    # #df['Continent'] = df['Continent'].astype(cat_type)
+
+
+def get_region_country_dict():
+
+    dictX = {}
+    grouped_data = world_population_df.groupby(by= "UN_Region")
+    
+    # Find countries with more infections, per region
+    for region, dfx in grouped_data:
+
+        dictX[region] = dfx.index.tolist()
+    
+    return dictX
+
+def get_region_list():
+
+    listX = []
+    grouped_data = world_population_df.groupby(by= "UN_Region")
+    
+    # Find countries with more infections, per region
+    for region, dfx in grouped_data:
+        print(str(region) + ": " + str(len(dfx.index.tolist())) )
+        listX.append(region)
+    
+    return listX
+
 def plot_covid_6vars(country_list=[], region=""):
 
     if(country_list == []):

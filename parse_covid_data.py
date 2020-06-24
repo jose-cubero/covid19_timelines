@@ -17,6 +17,33 @@ def get_world_pop(country_list=None):
     df = df.loc[:,['Country_Area', 'Continent', 'UN_Region', 'Population_2019']]
     df = df.rename(columns={'Country_Area': 'Country'}).set_index('Country')
 
+    # region_list = ["Northern America",
+    #            "Central America",
+    #            "Caribbean",
+    #            "South America",
+    #            "Northern Europe",
+    #            "Western Europe",
+    #            "Southern Europe",
+    #            "Eastern Europe",
+    #            "Northern Africa",
+    #            "Western Africa",
+    #            "Eastern Africa",
+    #            "Middle Africa",
+    #            "Southern Africa",
+    #            "Western Asia",
+    #            "Central Asia",
+    #            "Eastern Asia",
+    #            "Southern Asia",
+    #            "South-eastern Asia",
+    #            "Australia and New Zealand",
+    #            "Melanesia",
+    #         ]
+
+    # cat_reg_type = pd.CategoricalDtype(categories=region_list, ordered=True)
+
+    # df['UN_Region'] = df['UN_Region'].astype(cat_reg_type)
+    # #df['Continent'] = df['Continent'].astype(cat_type)
+
     if (debug_lib):
         df.sort_index().to_csv('./tmp/clean_world_pop_all.csv', columns=[], header=False)
 
@@ -45,8 +72,8 @@ def get_clean_covid_data(data_set, country_list=None):
     df = df[ ~(df['Country/Region'].isin(['Denmark', 'France', 'Netherlands', 'United Kingdom'])) |
               (df['Province/State'].isna()) ]
     ## Less efficient, drop..
-    df.drop(df[ (df['Country/Region'].isin(['Denmark', 'France', 'Netherlands', 'United Kingdom'])) &
-                 (df['Province/State'].notna()) ].index, axis=0, inplace=True)
+    # df.drop(df[ (df['Country/Region'].isin(['Denmark', 'France', 'Netherlands', 'United Kingdom'])) &
+    #             (df['Province/State'].notna()) ].index, axis=0, inplace=True)
 
     # Clean data s4: to be dropped:
     # * Diamond Princess
