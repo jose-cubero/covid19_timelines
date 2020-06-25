@@ -4,12 +4,11 @@ __version__ = '1.0.0'
 
 # python libs
 import argparse
-import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
 # local libs
-import world_pop
+import lib_world_pop
 
 debug_lib = True
 
@@ -69,31 +68,31 @@ def get_clean_covid_data(data_set, country_list=None):
 
     return df
 
-world_population_df = world_pop.get_world_pop()
+world_population_df = lib_world_pop.world_population_df
 world_confirmed_df = get_clean_covid_data('confirmed')
 world_deaths_df    = get_clean_covid_data('deaths')
 world_recovered_df = get_clean_covid_data('recovered')
 
+# TODO: explore decorators?
+# def check_country()
+
 def plot_covid_6vars(country_list=[], region=""):
 
+    if (region != ""):
+        print("selected region: " + region)
+        country_list += lib_world_pop.UN_region_dict[region]
+        print(country_list)
+        
+    country_list[:] = [x for x in country_list if x in world_confirmed_df.index]
+
     if(country_list == []):
-        print("plot_covid_6vars: received empty list invalid empty list! exiting..")
+        print("plot_covid_6vars: no valid country list..")
         exit(1)
-
-    for idx in country_list:
-        if idx not in world_confirmed_df.index.tolist():
-            country_list.remove(idx)
-
-    #country_list.pop()
-    
-    # print(flags)
 
     if(debug_lib):
         print("Selected countries: ")
         print(country_list)
         print("\n")
-
-    # exit(0)
 
     # Filter World population info
     # population_df = pcov.get_world_pop(country_list)
@@ -137,69 +136,3 @@ def plot_covid_6vars(country_list=[], region=""):
     death_rate_df.T.plot(ax=axs[1,2], title='Death-rate (%) = Net Deaths / Net Cases')
     
     return fig
-
-# This is executed when run from the command line
-if __name__ == "__main__":
-    # Create the parser
-    my_parser = argparse.ArgumentParser(prog='covid_main',
-        #usage='%(prog)s -i input [-o output]',
-        description='Read latest data and print top 5')
-
-    my_parser.add_argument('-v',
-        '--verbose',
-        action='store_true')
-    
-    group = my_parser.add_mutually_exclusive_group(required=True)
-
-    group.add_argument('-c',
-        '--country',
-        metavar='Country',
-        type=str,
-        action='store',
-        help='Name of the desired country')
-    
-    group.add_argument('-cl',
-        '--country_list',
-        metavar='PathToListFile',
-        type=str,
-        action='store',
-        help='File containing a list of countries, one per line')
-
-    # my_parser.add_argument('oFilePath',
-    #     metavar='outputFilePath',
-    #     type=str,
-    #     #required=True,
-    #     #action='store',
-    #     #default="output.txt",
-    #     help='the path to new output file')    
-
-    # Run Argument parser
-    args = my_parser.parse_args()
-
-    if args.verbose:
-        print("Done with argument parser")
-        print("Arguments:\n")
-        print(vars(args))
-        debug_lib = True
-        print("\n")
-    
-    country_list = []
-    if (args.country != None):
-        country_list.append(args.country)
-    else:
-        with open(args.country_list) as clf:
-            country_list = [line.rstrip() for line in clf]
-
-    # Preparation: close matplotlib windows..
-    plt.close('all')
-    # TODO: check if this would be a better approach
-    # load_covid_world_data()
-
-    #Run Main function (generates plots)
-    plot_covid_6vars(country_list)
-
-    #Show the plots
-    plt.show()
-
-    #Exit, no errors
-    exit(0)
