@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 # local libs
 import parse_covid_data as pcov
 
-debug_lib = False
+debug_lib = True
 world_population_df = pcov.get_world_pop()
 world_confirmed_df = pcov.get_clean_covid_data('confirmed')
 world_deaths_df    = pcov.get_clean_covid_data('deaths')
@@ -85,11 +85,26 @@ def plot_covid_6vars(country_list=[], region=""):
     if(country_list == []):
         print("plot_covid_6vars: received empty list invalid empty list! exiting..")
         exit(1)
+    
+    # flags = []
+    # for idx in range(len(country_list)):
+    #     if country_list[idx] not in world_confirmed_df.index.tolist():
+    #         flags.append(idx)
+
+    for idx in country_list:
+        if idx not in world_confirmed_df.index.tolist():
+            country_list.remove(idx)
+
+    #country_list.pop()
+    
+    # print(flags)
 
     if(debug_lib):
         print("Selected countries: ")
         print(country_list)
         print("\n")
+
+    exit(0)
 
     # Filter World population info
     # population_df = pcov.get_world_pop(country_list)
