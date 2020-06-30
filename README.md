@@ -1,6 +1,12 @@
 # csvplot_covid19
 
-## Python scripts
+- [csvplot_covid19](#csvplot_covid19)
+  - [Python sources](#python-sources)
+  - [/data](#data)
+  - [/input](#input)
+  - [/ouput](#ouput)
+
+## Python sources
 
 | Filename | Contents | Status | TODO |
 | :------- | :------: | :----: | :---: |
@@ -11,16 +17,11 @@
 
 ## /data
 world_pop: Data taken from Wikipedia: https://en.wikipedia.org/wiki/List_of_countries_by_population_(United_Nations).
-JHU/COVID-19: local copy (subtree) of John Hopkins Covid-19 data
+JHU/COVID-19: local copy (subtree) of John Hopkins Covid-19 data. https://github.com/CSSEGISandData/COVID-19 master 
 
-### /input
+## /input
 country-list: sample file showing how to select the countries/regions/continent to plot.
 
-### /ouput
+## /ouput
 When using the option (--save_output / -so) a figure and text file is stored here.
 
-- [csvplot_covid19](#csvplot_covid19)
-  - [Python scripts](#python-scripts)
-  - [/data](#data)
-    - [/input](#input)
-    - [/ouput](#ouput)
