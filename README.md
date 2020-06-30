@@ -4,24 +4,23 @@
 
 | Filename | Contents | Status | TODO |
 | :------- | :------: | :----: | :---: |
-| parse_population.py | contains helper functions (current main, plots 5 graphs (cases, cases_norm, cases_delta, deaths, death_rate, ) for the selected countries) | works  | keep existing helper functions, add new, delete main |
-| find_top5_per_Region.py | identifies top 5 countries per UN region based on cases and prints each UN region in a separate graph  | works  | write a file with the country statistics (prepare input for next script?), remove redundant def of helpers |
-| pandas_plot0.py | should be the Main script (pandas version of the plottop5) , contains args management | broken usage of dicts | improve dependencies |
-| old_covid_main.py | Orginal with pyplot and subplot (no pandas) | broken | reset back to working version! |
-| aux/sample1.py | shows usage of pandas .loc for data selection (series vs df) | works | nothing
-| aux/simpleplot.py | basic pyplot example, no pandas | works | nothing
-| aux/dpi.py | Shows usage of figsize and dpi for matplotlib.pyplot | Runs | nothing
+| lib_world_pop.py | Library providing world population data per country, UN-region and Continent. | Stable  | Add feature get_pop(continent, UN_region) |
+| lib_covid.py | Main library including all analysis and plotting functions. Plots timeline for 6 figures: cumulative cases (netto and normalized), active cases (normalized), delta cumulative cases (normlaized), death count and death rate. | Stable  | plot regions/continent/country-lists as single sum data |
+| covid_main.py | Main script, manages user arguments and parses the input file if used to identify the desired countries. For usage details see below | stable | improve input file parsing to support regions/continents and custom country lists |
+| covid_world_stats.py | Analyses covid-19 data to identify the countries with the most critical statistics. Plots each UN region in a separate graph  | only basic function implemented | write a file with the country statistics (prepare input for next script?) |
 
-## Data folders
+## /data
+world_pop: Data taken from Wikipedia: https://en.wikipedia.org/wiki/List_of_countries_by_population_(United_Nations).
+JHU/COVID-19: local copy (subtree) of John Hopkins Covid-19 data
 
-### input
-Time series summary (csse_covid_19_time_series)
-This folder contains daily time series summary tables, including confirmed, deaths and recovered. All data are from the daily case report.
+### /input
+country-list: sample file showing how to select the countries/regions/continent to plot.
 
-### ouput
+### /ouput
+When using the option (--save_output / -so) a figure and text file is stored here.
 
 - [csvplot_covid19](#csvplot_covid19)
   - [Python scripts](#python-scripts)
-  - [Data folders](#data-folders)
-    - [input](#input)
-    - [ouput](#ouput)
+  - [/data](#data)
+    - [/input](#input)
+    - [/ouput](#ouput)
