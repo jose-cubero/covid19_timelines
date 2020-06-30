@@ -19,7 +19,8 @@ def get_clean_covid_data(data_set, country_list=None):
         print("error, data_set" + data_set + "does not exist")
         exit(5)
 
-    file_name = './input/time_series_covid19_' + data_set + '_global.csv'
+    # file_name = './input/time_series_covid19_' + data_set + '_global.csv'
+    file_name = './data/JHU/COVID-19/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_' + data_set + '_global.csv'
     df = pd.read_csv(file_name, parse_dates=True)
     df = df.drop(columns= ['Lat','Long'])
 
