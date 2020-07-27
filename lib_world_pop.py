@@ -9,6 +9,17 @@ import matplotlib.pyplot as plt
 
 debug_lib = False
 
+def get_continent_list():
+
+    UN_continent_list = ["America",
+                "Europe",
+                "Africa",
+                "Asia",
+                "Oceania",
+            ]
+    
+    return UN_continent_list
+
 def get_region_list():
 
     UN_region_list = ["Northern America",
@@ -42,11 +53,11 @@ def get_world_pop(country_list=None):
     df = df.loc[:,['Country_Area', 'Continent', 'UN_Region', 'Population_2019']]
     df = df.rename(columns={'Country_Area': 'Country'}).set_index('Country')
 
-    # cat_reg_type = pd.CategoricalDtype(categories=(get_region_list()), ordered=True)
-    cat_reg_type = pd.CategoricalDtype(categories=(get_region_list()), ordered=False)
-
+    cat_reg_type = pd.CategoricalDtype(categories=(get_region_list()), ordered=True)
     df['UN_Region'] = df['UN_Region'].astype(cat_reg_type)
-    #df['Continent'] = df['Continent'].astype(cat_type)
+
+    cat_cont_type = pd.CategoricalDtype(categories=(get_continent_list()), ordered=True)
+    df['Continent'] = df['Continent'].astype(cat_cont_type)
 
     if (debug_lib):
         df.sort_index().to_csv('./tmp/clean_world_pop_all.csv', columns=[], header=False)
@@ -62,10 +73,19 @@ def get_region_country_dict():
     
     # Find countries with more infections, per region
     for region, dfx in grouped_data:
-
         dictX[region] = dfx.index.tolist()
-    
     return dictX
+
+def get_country_list():
+
+    listx = []
+    grouped_data = world_population_df.groupby(by= "UN_Region")
+    
+    # Find countries with more infections, per region
+    for region, dfx in grouped_data:
+        listx.append(dfx.index.tolist())
+    return listx
+
 
 world_population_df = get_world_pop()
 UN_region_dict = get_region_country_dict()
