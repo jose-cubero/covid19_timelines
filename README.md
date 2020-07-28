@@ -1,4 +1,4 @@
-# csvplot_covid19
+# covid19_timelines
 
 - [csvplot_covid19](#csvplot_covid19)
   - [Python sources](#python-sources)
