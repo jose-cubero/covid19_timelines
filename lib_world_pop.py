@@ -11,7 +11,7 @@ debug_lib = False
 
 def get_continent_list():
 
-    UN_continent_list = ["America",
+    UN_continent_list = ["Americas",
                 "Europe",
                 "Africa",
                 "Asia",
@@ -45,7 +45,20 @@ def get_region_list():
             ]    
     return UN_region_list
 
-def get_world_pop(country_list=None):
+def get_country_list(region_list=[], continent_list=[]):
+
+    df = world_population_df
+
+    #Apply optional filters
+    if(region_list!= []):
+        df = df[ (df['UN_Region'].isin(region_list) )]
+    elif(continent_list != []):
+        df = df[ (df['Continent'].isin(continent_list) )]
+
+    return df.index.tolist()
+
+
+def get_world_pop(country_list=[], region_list=[], continent_list=[]):
     file_worldpop = './data/world_pop/world_pop_wikipedia.csv'
     # fields: Country_Area,Continent,UN_Region,Population_2018,Population_2019,Change
 
@@ -62,44 +75,49 @@ def get_world_pop(country_list=None):
     if (debug_lib):
         df.sort_index().to_csv('./tmp/clean_world_pop_all.csv', columns=[], header=False)
 
-    if (country_list != None):
+    #Apply optional filters
+    if (country_list != []):
         df = df.loc[ country_list, :]
+    elif(region_list!= []):
+        df = df[ (df['UN_Region'].isin(region_list) )]
+    elif(continent_list!= []):
+        df = df[ (df['Continent'].isin(continent_list) )]
     return df
 
-def get_mega_world_pop():
+
+def get_extended_world_pop(cg_dict = {}, filter_list =[]):
     df0 = get_world_pop()
     df_country = df0.loc[:, ['Population_2019'] ].sort_index()
     df_region = df0.groupby('UN_Region').sum()
     df_continent = df0.groupby('Continent').sum()
 
     df_out = pd.concat([df_country, df_region, df_continent])
+
+    if (debug_lib):
+        df_out.sort_index().to_csv('./tmp/clean_world_pop_extended.csv', columns=[], header=False)
+
+    # Add custom groups
+    if (cg_dict != {}):
+        for cg in cg_dict:
+            df_out.loc[cg, :] = df_out.loc[ cg_dict[cg], :].sum(axis=0)
+
+    #Apply optional filters
+    if (filter_list != []):
+        df_out = df_out.loc[filter_list, :]
+
     return df_out
 
-def get_region_country_dict():
+# def get_region_country_dict():
 
-    dictX = {}
-    grouped_data = world_population_df.groupby(by= "UN_Region")
+#     dictX = {}
+#     grouped_data = world_population_df.groupby(by= "UN_Region")
     
-    # Find countries with more infections, per region
-    for region, dfx in grouped_data:
-        dictX[region] = dfx.index.tolist()
-    return dictX
-
-def get_country_list(region_list=[]):
-
-    df = world_population_df
-    # listx = []
-    # grouped_data = world_population_df.groupby(by= "UN_Region")
-    
-    # # Find countries with more infections, per region
-    # for region, dfx in grouped_data:
-    #     listx.append(dfx.index.tolist())
-    # return listx
-    if(region_list!= []):
-        df = df[ (df['UN_Region'].isin(region_list) )]
-
-    return df.index.tolist()
-
+#     # Find countries with more infections, per region
+#     for region, dfx in grouped_data:
+#         dictX[region] = dfx.index.tolist()
+#     return dictX
 
 world_population_df = get_world_pop()
-UN_region_dict = get_region_country_dict()
+# UN_region_dict = get_region_country_dict()
+
+# TODO: create a proper lib, with read-only internal objects- getter/setter functions.
