@@ -66,6 +66,15 @@ def get_world_pop(country_list=None):
         df = df.loc[ country_list, :]
     return df
 
+def get_mega_world_pop():
+    df0 = get_world_pop()
+    df_country = df0.loc[:, ['Population_2019'] ].sort_index()
+    df_region = df0.groupby('UN_Region').sum()
+    df_continent = df0.groupby('Continent').sum()
+
+    df_out = pd.concat([df_country, df_region, df_continent])
+    return df_out
+
 def get_region_country_dict():
 
     dictX = {}
@@ -76,15 +85,20 @@ def get_region_country_dict():
         dictX[region] = dfx.index.tolist()
     return dictX
 
-def get_country_list():
+def get_country_list(region_list=[]):
 
-    listx = []
-    grouped_data = world_population_df.groupby(by= "UN_Region")
+    df = world_population_df
+    # listx = []
+    # grouped_data = world_population_df.groupby(by= "UN_Region")
     
-    # Find countries with more infections, per region
-    for region, dfx in grouped_data:
-        listx.append(dfx.index.tolist())
-    return listx
+    # # Find countries with more infections, per region
+    # for region, dfx in grouped_data:
+    #     listx.append(dfx.index.tolist())
+    # return listx
+    if(region_list!= []):
+        df = df[ (df['UN_Region'].isin(region_list) )]
+
+    return df.index.tolist()
 
 
 world_population_df = get_world_pop()
