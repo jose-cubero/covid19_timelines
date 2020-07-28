@@ -77,6 +77,139 @@ world_recovered_df = get_clean_covid_data('recovered')
 # TODO: explore decorators?
 # def check_country()
 
+def create_flat_df(country_df):
+    reg_df = pd.merge(world_population_df.loc[: , ["UN_Region"]], country_df, left_index=True, right_index=True, how='inner').groupby("UN_Region").sum()
+    con_df = pd.merge(world_population_df.loc[: , ["Continent"]], country_df, left_index=True, right_index=True, how='inner').groupby("Continent").sum()
+    merged_df = pd.concat([country_df, reg_df, con_df], axis=0)
+    return merged_df
+
+def create_primary(cg_dict = {}):
+    # Var1: Confirmed cases
+    conf      = create_flat_df(world_confirmed_df)
+    # Var2: Confirmed deaths
+    deaths    = create_flat_df(world_deaths_df)
+    # Var3: Recovered deaths
+    recovered    = create_flat_df(world_recovered_df)
+
+    concat_list = [conf, deaths, recovered]
+    key_list = ["Confirmed Cases", "Total Deaths", "Recovered"]
+
+    primary = pd.concat(concat_list, axis=0, keys=key_list)
+    # Var is the index (level0)
+    # country/reg/cont is the index (level1)
+
+    print(primary)
+
+    if (cg_dict != {}):
+        cg_df_list = []
+        for cg in cg_dict:
+#             primary.assign()
+            # print(primary.loc[ ("Total Deaths", cg_dict[cg]), :])
+            # df_cg =  primary.loc[ (slice(None), cg_dict[cg]), :].sum(axis=0, level=0, numeric_only=True).rename(cg)
+            # pd.MultiIndex()
+            # groups = [cg]
+            # # colors = ['green', 'purple']
+            idx= pd.MultiIndex.from_product([key_list, [cg]])
+#             df_cg =  pd.DataFrame(primary.loc[ (slice(None), cg_dict[cg]), :].sum(axis=0, level=0) , index=idx)
+            # df_cg =  primary.loc[ (slice(None), cg_dict[cg]), :]
+            # df_cg =  primary.loc[ (slice(None), cg_dict[cg]), :].sum(axis=0, level=0)
+            # print(df_cg)
+
+            # for keyx in key_list:
+            #     print("keyx ")
+            #     print(keyx)
+            df_add = primary.loc[ (slice(None), cg_dict[cg]), :].sum(axis=0, level=0).set_index(idx)
+            print(df_add)
+            cg_df_list.append(df_add)
+
+            # primary.loc[ (slice(None), cg), :] = df_add
+
+
+            # for keyx in key_list
+            #     primary.loc[ (keyx, cg), :] = df_add.loc[(keyx, cg), :]
+
+            #exit()
+                # primary.loc[(keyx, str(cg)),:] = primary.loc[ (keyx, cg_dict[cg]), :].sum(axis=0, level=0).T
+
+            # print(primary)
+            # # exit(0)
+            # # primary.loc[ cg ] = df_cg
+            # primary.append(df_cg)
+            # primary = primary.append(df_cg)
+            # primary.loc[ ( slice(None), 'Row_Total' ), :] = df_cg.sum(numeric_only=True, axis=0, level=0)
+
+    primary = primary.append(cg_df_list).sort_index()
+    print( primary )
+
+    print( primary.loc[ (slice(None), ["group1", "Albania", "Mexico"] ),:] )
+    exit()
+
+    primary = primary.T
+    # Transposing, so that the date-time becomes the index.
+    # multi-columns are used as shown below
+    # level 0: variable
+    # level 1: country/region/continent    
+# FROM here on, the structure of the DF is following
+#          Confirmed Cases                          Total Deaths                        Recovered                         
+#          Mexico Northern Europe     Asia       Mexico Northern Europe   Asia    Mexico Northern Europe     Asia
+# 1/22/20      0               0      554            0               0     17         0               0       28
+# 1/23/20      0               0      653            0               0     18         0               0       30
+
+
+    return primary.T
+
+def get_full_df(filter_list = []):
+
+    full_df = create_primary()
+
+    if (filter_list != []):
+        full_df = full_df.loc[:, (slice(None), filter_list)]
+
+    return full_df
+
+
+def create_mega_df():
+
+    # Var1: Confirmed cases
+    mega_conf      = create_flat_df(world_confirmed_df)
+
+    #Var2: Confirmed deaths
+    mega_deaths    = create_flat_df(world_deaths_df)
+
+    #Var3: Confirmed cases norm
+    world_conf_norm = (world_confirmed_df.div(world_population_df['Population_2019'], axis=0))*1000
+    mega_conf_norm = create_flat_df(world_conf_norm)
+# TODO FIX this crap    mega_conf_norm = 
+
+    #Var4: Confirmed deaths norm
+    world_death_norm = (world_deaths_df.div(world_population_df['Population_2019'], axis=0))*1000
+    mega_death_norm = create_flat_df(world_death_norm)
+
+    #Var5: conf norm delta (1 week smooth)
+    world_conf_norm_delta = world_conf_norm.diff(axis=1).rolling(axis=1, window=7).mean()
+    mega_conf_norm_delta = create_flat_df(world_conf_norm_delta)
+
+    #Var6: death rate (1 week smooth)
+    # Deaths per confirmed cases. (Mortality Rate %)
+    #TODO: confirm rolling works
+    world_death_rate = ((world_deaths_df / world_confirmed_df) *100).rolling(axis=1, window=7).mean()
+    mega_death_rate = create_flat_df( world_death_rate )
+
+    concat_list = [mega_conf, mega_deaths, mega_death_norm, mega_conf_norm, mega_conf_norm_delta, mega_death_rate]
+    key_list = ["mega_conf", "mega_deaths", "mega_death_norm", "mega_conf_norm", "mega_conf_norm_delta", "mega_death_rate"]
+
+##########
+
+    mega_all = pd.concat(concat_list, axis=0, keys=key_list)
+    mega_all.to_csv('./tmp/mega.csv', columns=[], header=False)
+
+    # # TRANSPOSE. (and convert the index to date_time)
+    mega_all = mega_all.T
+    mega_all.index.rename('Date', inplace=True)
+    mega_all.index = pd.to_datetime(mega_all.index, format='%m/%d/%y', errors='coerce')
+
+    return mega_all
+
 def plot_covid_6vars(country_list=[], region=""):
 
     if (region != ""):
