@@ -3,9 +3,7 @@ __author__ = 'Jose Cubero'
 __version__ = '1.0.0'
 
 #import os.path
-import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
 
 debug_lib = False
 
