@@ -9,6 +9,7 @@ import matplotlib.pyplot as plt
 
 # local libs
 import world_pop as lwp
+#from .world_pop import *
 
 debug_lib = True
 
@@ -19,7 +20,7 @@ def get_clean_covid_data(data_set, country_list=None):
         print("error, data_set" + data_set + "does not exist")
         exit(5)
 
-    file_name = './data/covid-19/JHU/time_series_covid19_' + data_set + '_global.csv'
+    file_name = './data/time_series_covid19_' + data_set + '_global.csv'
     df = pd.read_csv(file_name, parse_dates=True)
     df = df.drop(columns= ['Lat','Long'])
 

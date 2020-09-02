@@ -9,8 +9,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 # local libs
-from lib1 import covid_JHU
-# import covid_JHU as lcov
+import covid_JHU
 
 # This is executed when run from the command line
 if __name__ == "__main__":

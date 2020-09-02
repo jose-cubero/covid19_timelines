@@ -57,7 +57,7 @@ def get_country_list(region_list=[], continent_list=[]):
 
 
 def get_world_pop(country_list=[], region_list=[], continent_list=[]):
-    file_worldpop = './data/world_pop/world_pop_wikipedia.csv'
+    file_worldpop = './data/world_pop_wikipedia.csv'
     # fields: Country_Area,Continent,UN_Region,Population_2018,Population_2019,Change
 
     df = pd.read_csv(file_worldpop)
