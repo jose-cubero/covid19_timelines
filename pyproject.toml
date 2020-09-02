@@ -1,8 +1,10 @@
 [tool.poetry]
 name = "covid19_timelines"
 version = "0.1.0"
-description = ""
+description = "Dashboard for the visualization of Covid19 statistics"
 authors = ["jose-cubero <cuberojose@gmail.com>"]
+readme = "README.md"
+license = "MIT"
 
 [tool.poetry.dependencies]
 python = "^3.8"

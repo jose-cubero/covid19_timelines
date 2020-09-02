@@ -9,7 +9,8 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 # local libs
-import lib_covid as lcov
+from lib1 import covid_JHU
+# import covid_JHU as lcov
 
 # This is executed when run from the command line
 if __name__ == "__main__":
@@ -81,7 +82,7 @@ if __name__ == "__main__":
     # load_covid_world_data()
 
     #Run Main function (generates plots)
-    lcov.plot_covid_6vars(country_list=my_country_list, region=my_region)
+    covid_JHU.plot_covid_6vars(country_list=my_country_list, region=my_region)
 
     #Show the plots
     plt.show()

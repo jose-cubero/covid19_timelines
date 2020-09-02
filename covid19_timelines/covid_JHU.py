@@ -8,7 +8,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 # local libs
-import lib_world_pop as lwp
+import world_pop as lwp
 
 debug_lib = True
 
@@ -68,7 +68,7 @@ def get_clean_covid_data(data_set, country_list=None):
     return df
 
 # Internal objects
-world_population_df = lwp.world_population_df
+world_population_df = lwp.get_world_pop()
 world_confirmed_df = get_clean_covid_data('confirmed')
 world_deaths_df    = get_clean_covid_data('deaths')
 world_recovered_df = get_clean_covid_data('recovered')

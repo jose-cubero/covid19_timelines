@@ -115,7 +115,7 @@ def get_extended_world_pop(cg_dict = {}, filter_list =[]):
 #         dictX[region] = dfx.index.tolist()
 #     return dictX
 
-world_population_df = get_world_pop()
+# world_population_df = get_world_pop()
 # UN_region_dict = get_region_country_dict()
 
 # TODO: create a proper lib, with read-only internal objects- getter/setter functions.
