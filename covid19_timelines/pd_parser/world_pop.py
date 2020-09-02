@@ -74,7 +74,7 @@ def get_world_pop(country_list=[], region_list=[], continent_list=[]):
     df['Continent'] = df['Continent'].astype(cat_cont_type)
 
     if (_debug_lib):
-        debugcsv = _lib_path+'/tmp/clean_world_pop_all.csv'
+        debugcsv = _lib_path+'/debug/clean_world_pop_all.csv'
         df.sort_index().to_csv(debugcsv, columns=[], header=False)
 
     #Apply optional filters
@@ -96,7 +96,7 @@ def get_extended_world_pop(cg_dict = {}, filter_list =[]):
     df_out = pd.concat([df_country, df_region, df_continent])
 
     if (_debug_lib):
-        debugcsv = _lib_path+'/tmp/clean_world_pop_extended.csv'
+        debugcsv = _lib_path+'/debug/clean_world_pop_extended.csv'
         df_out.sort_index().to_csv(debugcsv, columns=[], header=False)
 
     # Add custom groups

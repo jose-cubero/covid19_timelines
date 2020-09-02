@@ -63,7 +63,7 @@ def get_clean_covid_data(data_set, country_list=None):
     df = df.rename(index=fix_these)
 
     if (_debug_lib):
-        debugcsv = _lib_path+'/tmp/clean_covid_'+ data_set +'.csv'
+        debugcsv = _lib_path+'/debug/clean_covid_'+ data_set +'.csv'
         df.sort_index().to_csv(debugcsv, columns=[], header=False)
 
     #Apply optional filters
