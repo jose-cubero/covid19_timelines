@@ -4,8 +4,10 @@ __version__ = '1.0.0'
 
 #import os.path
 import pandas as pd
+from pathlib import Path
 
-debug_lib = False
+_debug_lib = True
+_lib_path = str(Path(__file__).parent)
 
 def get_continent_list():
 
@@ -57,8 +59,9 @@ def get_country_list(region_list=[], continent_list=[]):
 
 
 def get_world_pop(country_list=[], region_list=[], continent_list=[]):
-    file_worldpop = './data/world_pop_wikipedia.csv'
-    # fields: Country_Area,Continent,UN_Region,Population_2018,Population_2019,Change
+
+    file_worldpop = _lib_path+'/data/world_pop_wikipedia.csv'
+    # CSV fields: Country_Area,Continent,UN_Region,Population_2018,Population_2019,Change
 
     df = pd.read_csv(file_worldpop)
     df = df.loc[:,['Country_Area', 'Continent', 'UN_Region', 'Population_2019']]
@@ -70,8 +73,9 @@ def get_world_pop(country_list=[], region_list=[], continent_list=[]):
     cat_cont_type = pd.CategoricalDtype(categories=(get_continent_list()), ordered=True)
     df['Continent'] = df['Continent'].astype(cat_cont_type)
 
-    if (debug_lib):
-        df.sort_index().to_csv('./tmp/clean_world_pop_all.csv', columns=[], header=False)
+    if (_debug_lib):
+        debugcsv = _lib_path+'/tmp/clean_world_pop_all.csv'
+        df.sort_index().to_csv(debugcsv, columns=[], header=False)
 
     #Apply optional filters
     if (country_list != []):
@@ -91,8 +95,9 @@ def get_extended_world_pop(cg_dict = {}, filter_list =[]):
 
     df_out = pd.concat([df_country, df_region, df_continent])
 
-    if (debug_lib):
-        df_out.sort_index().to_csv('./tmp/clean_world_pop_extended.csv', columns=[], header=False)
+    if (_debug_lib):
+        debugcsv = _lib_path+'/tmp/clean_world_pop_extended.csv'
+        df_out.sort_index().to_csv(debugcsv, columns=[], header=False)
 
     # Add custom groups
     if (cg_dict != {}):

@@ -9,7 +9,8 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 # local libs
-import covid_JHU
+# from covid19_timelines.pd_parser import world_pop
+from covid19_timelines.pd_parser import covid_JHU
 
 # This is executed when run from the command line
 if __name__ == "__main__":
@@ -57,10 +58,10 @@ if __name__ == "__main__":
     args = my_parser.parse_args()
 
     if args.verbose:
-        print("Done with argument parser")
+        print("Argument parser done")
         print("Arguments:\n")
         print(vars(args))
-        debug_lib = True
+        # debug_lib = True
         print("\n")
     
     my_country_list = []

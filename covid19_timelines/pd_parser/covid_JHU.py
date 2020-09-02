@@ -6,12 +6,13 @@ __version__ = '1.0.0'
 # import argparse
 import pandas as pd
 import matplotlib.pyplot as plt
+from pathlib import Path
 
 # local libs
-import world_pop as lwp
-#from .world_pop import *
+from covid19_timelines.pd_parser import world_pop
 
-debug_lib = True
+_debug_lib = True
+_lib_path = str(Path(__file__).parent)
 
 def get_clean_covid_data(data_set, country_list=None):
 
@@ -20,7 +21,8 @@ def get_clean_covid_data(data_set, country_list=None):
         print("error, data_set" + data_set + "does not exist")
         exit(5)
 
-    file_name = './data/time_series_covid19_' + data_set + '_global.csv'
+    #file_name = './covid19_timelines/data/time_series_covid19_' + data_set + '_global.csv'
+    file_name = _lib_path+'/data/time_series_covid19_' + data_set + '_global.csv'
     df = pd.read_csv(file_name, parse_dates=True)
     df = df.drop(columns= ['Lat','Long'])
 
@@ -60,8 +62,9 @@ def get_clean_covid_data(data_set, country_list=None):
 
     df = df.rename(index=fix_these)
 
-    if (debug_lib):
-        df.sort_index().to_csv('./tmp/clean_covid.csv', columns=[], header=False)
+    if (_debug_lib):
+        debugcsv = _lib_path+'/tmp/clean_covid_'+ data_set +'.csv'
+        df.sort_index().to_csv(debugcsv, columns=[], header=False)
 
     #Apply optional filters
     if (country_list != None):
@@ -69,7 +72,7 @@ def get_clean_covid_data(data_set, country_list=None):
     return df
 
 # Internal objects
-world_population_df = lwp.get_world_pop()
+world_population_df = world_pop.get_world_pop()
 world_confirmed_df = get_clean_covid_data('confirmed')
 world_deaths_df    = get_clean_covid_data('deaths')
 world_recovered_df = get_clean_covid_data('recovered')
@@ -120,7 +123,7 @@ def create_primary(cg_dict = {}, filter_list =[]):
         recovered = recovered.loc[filter_list, :]
 
     #AuxVar: Population for the custom list
-    ext_world_pop = lwp.get_extended_world_pop(cg_dict, filter_list)
+    ext_world_pop = world_pop.get_extended_world_pop(cg_dict, filter_list)
 
     #Vars1: Confirmed cases norm
     conf_norm = (conf.div(ext_world_pop['Population_2019'], axis=0))*1000
@@ -169,7 +172,7 @@ def plot_covid_6vars(country_list=[], region=""):
 
     if (region != ""):
         print("selected region: " + region)
-        country_list += lwp.UN_region_dict[region]
+        country_list += world_pop.UN_region_dict[region]
         print(country_list)
        
     country_list[:] = [x for x in country_list if x in world_confirmed_df.index]
@@ -178,7 +181,7 @@ def plot_covid_6vars(country_list=[], region=""):
         print("plot_covid_6vars: no valid country list..")
         exit(1)
 
-    if(debug_lib):
+    if(_debug_lib):
         print("Selected countries: ")
         print(country_list)
         print("\n")
