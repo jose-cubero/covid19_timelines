@@ -12,8 +12,7 @@ import matplotlib.pyplot as plt
 # from covid19_timelines.pd_parser import world_pop
 from covid19_timelines.pd_parser import covid_JHU
 
-# This is executed when run from the command line
-if __name__ == "__main__":
+def main_func():
     # Create the parser
     my_parser = argparse.ArgumentParser(prog='covid_main',
         #usage='%(prog)s -i input [-o output]',
@@ -86,6 +85,12 @@ if __name__ == "__main__":
 
     #Show the plots
     plt.show()
+
+
+
+# This is executed when run from the command line
+if __name__ == "__main__":
+    main_func()
 
     #Exit, no errors
     exit(0)

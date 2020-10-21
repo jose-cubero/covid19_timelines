@@ -9,14 +9,18 @@ pd.options.plotting.backend = "plotly"
 #import matplotlib.pyplot as plt
 
 # local libs
-import lib_covid as lcovid
-import lib_world_pop as lwpop
+# local libs
+# from covid19_timelines.pd_parser import world_pop
+from covid19_timelines.pd_parser import covid_JHU
+
+# import lib_covid as lcovid
+# import lib_world_pop as lwpop
 
 # Load data into the DFs
-cases_net_df     = lcovid.world_confirmed_df
+cases_net_df     = covid_JHU.world_confirmed_df
 # deaths_net_df    = lcovid.world_deaths_df
 # recovered_net_df = lcovid.world_recovered_df
-population_df    = lwpop.get_world_pop()
+# population_df    = lwpop.get_world_pop()
 
 # cases_norm_df    = cases_net_df.div(population_df['Population_2019'], axis=0) * 1000 # (per 1000)
 # # drops countries without data..
@@ -29,7 +33,7 @@ population_df    = lwpop.get_world_pop()
 # # Join region information as first column.
 # #cases_norm_df = population_df.loc[: , ["UN_Region"]].join(cases_norm_df, how='inner')
 
-cases_net_df = pd.merge(population_df.loc[: , ["UN_Region", "Continent"]], cases_net_df, left_index=True, right_index=True, how='inner')
+# cases_net_df = pd.merge(population_df.loc[: , ["UN_Region", "Continent"]], cases_net_df, left_index=True, right_index=True, how='inner')
 # region_list = lwpop.get_region_list()
 # cat_type = pd.CategoricalDtype(categories=region_list, ordered=True)
 
@@ -39,7 +43,7 @@ cases_net_df = pd.merge(population_df.loc[: , ["UN_Region", "Continent"]], cases
 # #print(cases_norm_df['UN_Region'].unique())
 
 # # grouped_data = cases_net_df.groupby("UN_Region")
-merged_data = cases_net_df.groupby("UN_Region").sum()
+# merged_data = cases_net_df.groupby("UN_Region").sum()
 # print(a_group)
 # for name, group in a_group:
 #  	print(name)
@@ -66,7 +70,7 @@ merged_data = cases_net_df.groupby("UN_Region").sum()
     # print ("\n")
 
 
-fig = merged_data.T.plot()
+fig = cases_net_df.T.plot()
 
 
 # my_list= cases_norm_df.nlargest(20, columns=cases_norm_df.columns[-1], keep='all')

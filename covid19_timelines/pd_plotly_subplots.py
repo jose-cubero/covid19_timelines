@@ -1,4 +1,3 @@
-import lib_covid as lc
 import pandas as pd
 pd.options.plotting.backend = "plotly"
 
@@ -15,47 +14,48 @@ pd.options.plotting.backend = "plotly"
 #         fig = dfx.plot(title=var)
 #         fig.show()
 
-
 from plotly.subplots import make_subplots
 import plotly.graph_objs as go
 
-def plot_multi_column(df_in, mask=False):
-    rows = 2
-    cols = len(mask)//2 + ( len(mask)%2 >0 )    # round up
+from covid19_timelines.pd_parser import covid_JHU
 
-    # fig = make_subplots(rows=rows, cols=cols)
-    # fig = make_subplots(rows=rows, cols=cols)
-    rowx=1
-    colx=1
+def plot_multi_column(df1, df2, df3):
 
-    df2 = df_in.loc[:, (slice("Confirmed Cases"), slice(None))]
-    df2.columns = df2.columns.droplevel(level=0)
-    print(df2)
-#     exit()
+    fig = make_subplots(rows=2, cols=2)
 
-    data = [ go.Scatter(
-        x = df2.index,
-        y = df2['Mexico'],
-        name='collisions',
-        # line = dict(
-        # color = color1
-        # )
+    data1 = go.Scatter(
+        x = df1.index,
+        y = df1['Mexico']
         )
-    ]
+    
 
-    fig = go.Figure(data=data)
+    data2 = go.Scatter(
+        x = df2.index,
+        y = df2['Mexico']
+        )
 
-    # for var, dfx in df_in.groupby(axis=1, level=0):
-    #     dfx.columns = dfx.columns.droplevel(level=0)
-    #     print(dfx)
-    #     fig.add_trace(
-    #         dfx,
-    #         mode="lines",
-    #         row=rowx, col=colx
-    #     )
-    #     if (colx < cols):
-    #         colx = colx+1
-    #     else:
-    #         colx = colx+1
-    #         rowx = rowx+1
+    data3 = go.Scatter(
+        x = df3.index,
+        y = df3['Mexico']
+        )
+
+    fig.add_trace(
+                  data1,
+                  row=1, col=1
+                )
+    fig.add_trace(
+                  data2,
+                  row=1, col=2
+                )
+    fig.add_trace(
+                  data3,
+                  row=2, col=1
+                )
+
     fig.show()
+
+df1 = covid_JHU.world_confirmed_df
+df2 = covid_JHU.world_deaths_df
+df3 = covid_JHU.world_recovered_df
+plot_multi_column(df1.T, df2.T, df3.T)
+
